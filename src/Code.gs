@@ -190,39 +190,83 @@ function sendTelegram(token, chatId, text, markup = null) {
 }
 
 // ==========================================
-// SETUP HELPERS
+// MENU & SETUP
 // ==========================================
-function setup() {
-  // Helper to create sheets if they don't exist
-  // Requires ACTIVE spreadsheet or ID
+
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('Dead Man Bot')
+      .addItem('Setup Sheet', 'setupSheet')
+      .addToUi();
+}
+
+function setupSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   if (!ss) {
-    Logger.log("Please run this bound to a spreadsheet or set SHEET_ID.");
+    Logger.log("Please run this bound to a spreadsheet.");
     return;
   }
   
-  // Set ID for script to use later
+  // Set ID for script to use later if needed, though active sheet is enough for bound scripts
   PropertiesService.getScriptProperties().setProperty("SHEET_ID", ss.getId());
   
+  // 1. CONFIG SHEET
   let shConfig = ss.getSheetByName(SHEET_CONFIG);
   if (!shConfig) {
     shConfig = ss.insertSheet(SHEET_CONFIG);
-    shConfig.appendRow(["Key", "Value"]);
-    shConfig.appendRow(["TELEGRAM_BOT_TOKEN", ""]);
-    shConfig.appendRow(["USER_CHAT_ID", ""]);
-    shConfig.appendRow(["CHECK_TIME_HOUR", "9"]);
-    shConfig.appendRow(["TIMEOUT_HOURS", "24"]);
-    shConfig.appendRow(["MAX_RETRIES", "3"]);
-    shConfig.appendRow(["STATUS", "ALIVE"]);
-    shConfig.appendRow(["LAST_PING", ""]);
-    shConfig.appendRow(["RETRIES", "0"]);
+    // Header
+    const headerRange = shConfig.getRange(1, 1, 1, 2);
+    headerRange.setValues([["Key", "Value"]]);
+    headerRange.setFontWeight("bold");
+    headerRange.setBackground("#efefef");
+    shConfig.setFrozenRows(1);
+    
+    // Default Values
+    shConfig.getRange(2, 1, 8, 2).setValues([
+      ["TELEGRAM_BOT_TOKEN", ""],
+      ["USER_CHAT_ID", ""],
+      ["CHECK_TIME_HOUR", "9"],
+      ["TIMEOUT_HOURS", "24"],
+      ["MAX_RETRIES", "3"],
+      ["STATUS", "ALIVE"],
+      ["LAST_PING", ""],
+      ["RETRIES", "0"]
+    ]);
+    
+    // Auto-resize
+    shConfig.autoResizeColumns(1, 2);
   }
   
+  // 2. BENEFICIARIES SHEET
   let shBen = ss.getSheetByName(SHEET_BENEFICIARIES);
   if (!shBen) {
     shBen = ss.insertSheet(SHEET_BENEFICIARIES);
-    shBen.appendRow(["Email", "Subject", "Content"]);
+    // Header
+    const headerRange = shBen.getRange(1, 1, 1, 3);
+    headerRange.setValues([["Email", "Subject", "Content"]]);
+    headerRange.setFontWeight("bold");
+    headerRange.setBackground("#efefef");
+    shBen.setFrozenRows(1);
+    
+    // Example Row
+    shBen.appendRow(["example@email.com", "Important Info", "Here is my secret..."]);
+    
+    // Auto-resize
+    shBen.autoResizeColumns(1, 3);
   }
+  
+  // 3. CLEANUP
+  // Remove default "Sheet1" if it exists and is empty/default
+  const sheet1 = ss.getSheetByName("Sheet1");
+  if (sheet1 && ss.getSheets().length > 1) {
+    try {
+      ss.deleteSheet(sheet1);
+    } catch(e) {
+      // Ignore if can't delete
+    }
+  }
+
+  ss.toast("Setup complete! Please fill in your Config sheet.", "Dead Man Bot");
 }
 
 function setWebhook() {

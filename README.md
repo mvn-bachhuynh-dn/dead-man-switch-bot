@@ -26,7 +26,11 @@ This system ensures your legacy information is delivered to your beneficiaries i
 ## 3. Deploy Script
 1.  Open **Extensions > Apps Script**.
 2.  Copy the code from `src/Code.gs` in this folder into the script editor.
-3.  **Run** the `setup()` function once to initialize permissions.
+3.  **Run Setup**:
+    *   Reload your Google Sheet.
+    *   You should see a new menu **"Dead Man Bot"** appear in the toolbar (after a few seconds).
+    *   Click **Dead Man Bot > Setup Sheet**.
+    *   The script will automatically create the "Config" and "Beneficiaries" sheets and formatting for you.
 4.  **Deploy > New Deployment** > Select **Web App**.
     *   Execute as: **Me**.
     *   Who has access: **Anyone**.
