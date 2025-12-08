@@ -9,19 +9,8 @@ This system ensures your legacy information is delivered to your beneficiaries i
 4.  Get your **Chat ID** (you can use @userinfobot or look at logs later).
 
 ## 2. Google Sheet Setup
-1.  Create a new Google Sheet.
-2.  **Sheet 1 Name**: `Config`
-    *   A1: `Key` | B1: `Value`
-    *   A2: `TELEGRAM_BOT_TOKEN` | B2: *Paste Token Here*
-    *   A3: `USER_CHAT_ID` | B3: *Paste Chat ID Here*
-    *   A4: `CHECK_TIME_HOUR` | B4: `9` (9 AM)
-    *   A5: `TIMEOUT_HOURS` | B5: `24` (Wait 24h for reply)
-    *   A6: `MAX_RETRIES` | B6: `3` (Retry 3 times before declaring dead)
-    *   A7: `STATUS` | B7: `ALIVE` (Don't touch)
-    *   A8: `LAST_PING` | B8: (Leave empty)
-3.  **Sheet 2 Name**: `Beneficiaries`
-    *   A1: `Email` | B1: `Subject` | C1: `Content`
-    *   A2: `wife@example.com` | `Secret Bank Info` | `My password is...`
+1.  Create a new, empty Google Sheet.
+2.  The script will automatically create the necessary sheets and columns for you in the next step.
 
 ## 3. Deploy Script
 1.  Open **Extensions > Apps Script**.
