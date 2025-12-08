@@ -6,17 +6,31 @@ const SHEET_CONFIG = "Config";
 const SHEET_BENEFICIARIES = "Beneficiaries";
 
 function getSheet() {
-  // Assumes script is bound to sheet or we put Sheet ID here. 
-  // For 'Vibe coding', let's assume User pastes this into a Sheet-bound script or puts ID here.
-  // Better: Standalone script that creates its own sheet if missing? 
-  // No, user instructions say "1 google sheet". 
-  // Let's assume this script is attached to the Sheet ID defined below or Active.
-  // We'll require user to put Sheet ID in Property or hardcode.
+  const props = PropertiesService.getScriptProperties();
+  let sheetId = props.getProperty("SHEET_ID");
   
-  // PROMPT FOR USER: PLEASE ENTER YOUR SHEET ID HERE
-  const SHEET_ID = PropertiesService.getScriptProperties().getProperty("SHEET_ID");
-  if (!SHEET_ID) throw new Error("Please set SHEET_ID in Script Properties or hardcode it.");
-  return SpreadsheetApp.openById(SHEET_ID);
+  // 1. Try to open by ID if existing
+  if (sheetId) {
+    try {
+      return SpreadsheetApp.openById(sheetId);
+    } catch (e) {
+      Logger.log("Invalid SHEET_ID in properties, trying active sheet...");
+    }
+  }
+
+  // 2. Fallback: Try Active Spreadsheet (Bound Script)
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (ss) {
+      // Save for future use (e.g. WebHook)
+      props.setProperty("SHEET_ID", ss.getId());
+      return ss;
+    }
+  } catch (e) {
+    // Ignore
+  }
+
+  throw new Error("Could not find Spreadsheet. Please run 'Setup Sheet' from the menu first, or set SHEET_ID in Script Properties.");
 }
 
 function getConfig() {
