@@ -71,16 +71,6 @@ function mainJob() {
   const status = config['STATUS'];
   const telegramId = config['USER_CHAT_ID'];
   const botToken = config['TELEGRAM_BOT_TOKEN'];
-
-function mainJob() {
-  const config = getConfig();
-  const now = new Date();
-  const currentHour = now.getHours();
-  
-  const checkHour = Number(config['CHECK_TIME_HOUR']); // e.g., 9
-  const status = config['STATUS'];
-  const telegramId = config['USER_CHAT_ID'];
-  const botToken = config['TELEGRAM_BOT_TOKEN'];
   
   // TEST MODE LOGIC
   const testMode = String(config['TEST_MODE']).toUpperCase() === 'TRUE';
