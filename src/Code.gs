@@ -72,10 +72,26 @@ function mainJob() {
   const telegramId = config['USER_CHAT_ID'];
   const botToken = config['TELEGRAM_BOT_TOKEN'];
 
-  Logger.log(`Running mainJob. Status: ${status}, Hour: ${currentHour}`);
+function mainJob() {
+  const config = getConfig();
+  const now = new Date();
+  const currentHour = now.getHours();
+  
+  const checkHour = Number(config['CHECK_TIME_HOUR']); // e.g., 9
+  const status = config['STATUS'];
+  const telegramId = config['USER_CHAT_ID'];
+  const botToken = config['TELEGRAM_BOT_TOKEN'];
+  
+  // TEST MODE LOGIC
+  const testMode = String(config['TEST_MODE']).toUpperCase() === 'TRUE';
+
+  Logger.log(`Running mainJob. Status: ${status}, Hour: ${currentHour}, TestMode: ${testMode}`);
 
   // 1. CHECK ALIVE TIME
-  if (currentHour === checkHour && status === 'ALIVE') {
+  // Normal mode: Check hour. Test mode: Always run if ALIVE.
+  const isTimeToCheck = (currentHour === checkHour) || testMode;
+  
+  if (isTimeToCheck && status === 'ALIVE') {
     // It's time to check!
     sendTelegram(botToken, telegramId, "🧟 Bạn còn sống không? Reply 'Alive' hoặc bấm nút bên dưới.", {
       inline_keyboard: [[{ text: "💪 I'm Alive", callback_data: "alive" }]]
@@ -89,14 +105,20 @@ function mainJob() {
   // 2. CHECK TIMEOUT IF PENDING
   if (status === 'PENDING') {
     const lastPing = new Date(config['LAST_PING']);
-    const timeoutHours = Number(config['TIMEOUT_HOURS']);
+    const timeoutVal = Number(config['TIMEOUT_HOURS']);
     const maxRetries = Number(config['MAX_RETRIES']);
     const currentRetries = Number(config['RETRIES'] || 0);
 
     const diffMs = now - lastPing;
-    const diffHours = diffMs / (1000 * 60 * 60);
+    
+    // Calculate difference based on mode
+    // Normal: Hours. Test: Minutes.
+    const diffUnit = testMode ? (diffMs / (1000 * 60)) : (diffMs / (1000 * 60 * 60));
+    const unitName = testMode ? "minutes" : "hours";
 
-    if (diffHours >= timeoutHours) {
+    Logger.log(`Checking timeout. Diff: ${diffUnit.toFixed(2)} ${unitName}. Timeout: ${timeoutVal}`);
+
+    if (diffUnit >= timeoutVal) {
        // Timeout reached!
        if (currentRetries < maxRetries) {
          // Retry
@@ -243,6 +265,7 @@ function setupSheet() {
       ["TIMEOUT_HOURS", "24"],
       ["MAX_RETRIES", "3"],
       ["STATUS", "ALIVE"],
+      ["TEST_MODE", "FALSE"],
       ["LAST_PING", ""],
       ["RETRIES", "0"]
     ]);
