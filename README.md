@@ -37,4 +37,5 @@ This system ensures your legacy information is delivered to your beneficiaries i
 *   The bot will check every hour.
 *   If `Current Hour == CHECK_TIME_HOUR`, it sends "Bạn còn sống không? 🧟".
 *   You reply "Alive" or click the button.
+*   A5: `TIMEOUT_HOURS` | B5: `24` (Wait 24h). Support suffixes: `30m` (30 mins), `9h` (9 hours). Default is hours if no suffix.
 *   If you don't reply after `TIMEOUT_HOURS` * `MAX_RETRIES`, emails are sent.

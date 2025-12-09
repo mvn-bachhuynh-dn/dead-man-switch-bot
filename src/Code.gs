@@ -72,7 +72,7 @@ function mainJob() {
   const telegramId = config['USER_CHAT_ID'];
   const botToken = config['TELEGRAM_BOT_TOKEN'];
   
-  // TEST MODE LOGIC
+  // TEST MODE LOGIC (Only affects start time check)
   const testMode = String(config['TEST_MODE']).toUpperCase() === 'TRUE';
 
   Logger.log(`Running mainJob. Status: ${status}, Hour: ${currentHour}, TestMode: ${testMode}`);
@@ -95,20 +95,19 @@ function mainJob() {
   // 2. CHECK TIMEOUT IF PENDING
   if (status === 'PENDING') {
     const lastPing = new Date(config['LAST_PING']);
-    const timeoutVal = Number(config['TIMEOUT_HOURS']);
+    
+    // Parse timeout to milliseconds
+    const timeoutInput = config['TIMEOUT_HOURS']; // Can be '24', '9h', '30m'
+    const timeoutMs = parseDurationToMs(timeoutInput);
+    
     const maxRetries = Number(config['MAX_RETRIES']);
     const currentRetries = Number(config['RETRIES'] || 0);
 
     const diffMs = now - lastPing;
     
-    // Calculate difference based on mode
-    // Normal: Hours. Test: Minutes.
-    const diffUnit = testMode ? (diffMs / (1000 * 60)) : (diffMs / (1000 * 60 * 60));
-    const unitName = testMode ? "minutes" : "hours";
+    Logger.log(`Checking timeout. Diff: ${(diffMs/60000).toFixed(1)}m. Timeout: ${(timeoutMs/60000).toFixed(1)}m`);
 
-    Logger.log(`Checking timeout. Diff: ${diffUnit.toFixed(2)} ${unitName}. Timeout: ${timeoutVal}`);
-
-    if (diffUnit >= timeoutVal) {
+    if (diffMs >= timeoutMs) {
        // Timeout reached!
        if (currentRetries < maxRetries) {
          // Retry
@@ -123,6 +122,27 @@ function mainJob() {
        }
     }
   }
+}
+
+// Helper to parse duration strings like "9h", "30m", or "24" (default hours)
+function parseDurationToMs(input) {
+  if (!input) return 24 * 60 * 60 * 1000; // Default 24h
+  const str = String(input).trim().toLowerCase();
+  
+  if (str.endsWith('m')) {
+    return Number(str.replace('m', '')) * 60 * 1000;
+  }
+  if (str.endsWith('h')) {
+    return Number(str.replace('h', '')) * 60 * 60 * 1000;
+  }
+  
+  // Default to hours if just a number
+  const val = Number(str);
+  if (!isNaN(val)) {
+    return val * 60 * 60 * 1000; 
+  }
+  
+  return 24 * 60 * 60 * 1000; // Fallback
 }
 
 function triggerLegacyProtocol() {
