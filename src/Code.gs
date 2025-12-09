@@ -67,7 +67,9 @@ function mainJob() {
   const now = new Date();
   const currentHour = now.getHours();
   
-  const checkHour = Number(config['CHECK_TIME_HOUR']); // e.g., 9
+  // Parse CHECK_TIME_HOUR (supports '9', '9h')
+  const checkHourStr = String(config['CHECK_TIME_HOUR']).toLowerCase().replace('h', '').trim();
+  const checkHour = Number(checkHourStr); // e.g., 9
   const status = config['STATUS'];
   const telegramId = config['USER_CHAT_ID'];
   const botToken = config['TELEGRAM_BOT_TOKEN'];
