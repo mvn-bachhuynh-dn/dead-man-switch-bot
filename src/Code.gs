@@ -127,24 +127,29 @@ function mainJob() {
 }
 
 // Helper to parse duration strings like "9h", "30m", or "24" (default hours)
+// Helper to parse duration strings like "9h", "30m", or "24" (default hours)
 function parseDurationToMs(input) {
   if (!input) return 24 * 60 * 60 * 1000; // Default 24h
+  
   const str = String(input).trim().toLowerCase();
   
-  if (str.endsWith('m')) {
-    return Number(str.replace('m', '')) * 60 * 1000;
-  }
-  if (str.endsWith('h')) {
-    return Number(str.replace('h', '')) * 60 * 60 * 1000;
+  // Regex to match "9.5", "30", "30m", "5h"
+  const match = str.match(/^([\d\.]+)\s*([mh]?)$/);
+  
+  if (!match) {
+    Logger.log(`Warning: Invalid duration format '${input}'. Defaulting to 24h.`);
+    return 24 * 60 * 60 * 1000;
   }
   
-  // Default to hours if just a number
-  const val = Number(str);
-  if (!isNaN(val)) {
-    return val * 60 * 60 * 1000; 
+  const val = Number(match[1]);
+  const unit = match[2];
+  
+  if (unit === 'm') {
+    return val * 60 * 1000; // Minutes
   }
   
-  return 24 * 60 * 60 * 1000; // Fallback
+  // Default to hours (if unit is 'h' or empty)
+  return val * 60 * 60 * 1000; 
 }
 
 function triggerLegacyProtocol() {
