@@ -192,12 +192,21 @@ function doPost(e) {
     const update = JSON.parse(e.postData.contents);
     const config = getConfig();
     const botToken = config['TELEGRAM_BOT_TOKEN'];
+    const authorizedChatId = String(config['USER_CHAT_ID']).trim();
+
     
     // Handle Callback Query (Button click)
     if (update.callback_query) {
       const cb = update.callback_query;
       const data = cb.data;
-      const chatId = cb.message.chat.id;
+      const chatId = String(cb.message.chat.id);
+      
+      // Authorization Check
+      if (chatId !== authorizedChatId) {
+         Logger.log(`Unauthorized access attempt from Chat ID: ${chatId}`);
+         return HtmlService.createHtmlOutput("OK");
+      }
+
       
       if (data === 'alive') {
         confirmAlive(chatId, botToken);
@@ -211,7 +220,14 @@ function doPost(e) {
     if (update.message) {
       const msg = update.message;
       const text = msg.text;
-      const chatId = msg.chat.id;
+      const chatId = String(msg.chat.id);
+      
+      // Authorization Check
+      if (chatId !== authorizedChatId) {
+         Logger.log(`Unauthorized access attempt from Chat ID: ${chatId}`);
+         return HtmlService.createHtmlOutput("OK");
+      }
+
       
       // Simple logic: Any message from user confirms they are alive
       if (text) {
@@ -280,7 +296,8 @@ function setupSheet() {
     shConfig.setFrozenRows(1);
     
     // Default Values
-    shConfig.getRange(2, 1, 8, 2).setValues([
+    // Default Values
+    const defaults = [
       ["TELEGRAM_BOT_TOKEN", ""],
       ["USER_CHAT_ID", ""],
       ["CHECK_DAY", "1"],
@@ -291,10 +308,33 @@ function setupSheet() {
       ["TEST_MODE", "FALSE"],
       ["LAST_PING", ""],
       ["RETRIES", "0"]
-    ]);
+    ];
+    shConfig.getRange(2, 1, defaults.length, 2).setValues(defaults);
     
     // Auto-resize
     shConfig.autoResizeColumns(1, 2);
+    ss.toast("Created Config sheet", "Setup");
+  } else {
+    // Sheet exists, check if empty or needs repair
+    if (shConfig.getLastRow() <= 1) {
+       // Repair: File Default Values
+       const defaults = [
+         ["TELEGRAM_BOT_TOKEN", ""],
+         ["USER_CHAT_ID", ""],
+         ["CHECK_DAY", "1"],
+         ["CHECK_TIME_HOUR", "9"],
+         ["TIMEOUT_HOURS", "24"],
+         ["MAX_RETRIES", "3"],
+         ["STATUS", "ALIVE"],
+         ["TEST_MODE", "FALSE"],
+         ["LAST_PING", ""],
+         ["RETRIES", "0"]
+       ];
+       shConfig.getRange(2, 1, defaults.length, 2).setValues(defaults);
+       ss.toast("Repaired empty Config sheet", "Setup");
+    } else {
+       ss.toast("Config sheet already exists.", "Setup");
+    }
   }
   
   // 2. BENEFICIARIES SHEET
