@@ -66,10 +66,13 @@ function mainJob() {
   const config = getConfig();
   const now = new Date();
   const currentHour = now.getHours();
+  const currentDay = now.getDate();
   
   // Parse CHECK_TIME_HOUR (supports '9', '9h')
   const checkHourStr = String(config['CHECK_TIME_HOUR']).toLowerCase().replace('h', '').trim();
   const checkHour = Number(checkHourStr); // e.g., 9
+  const checkDayStr = String(config['CHECK_DAY'] || "").trim();
+  const checkDay = checkDayStr ? Number(checkDayStr) : null; // If empty, run daily
   const status = config['STATUS'];
   const telegramId = config['USER_CHAT_ID'];
   const botToken = config['TELEGRAM_BOT_TOKEN'];
@@ -77,11 +80,12 @@ function mainJob() {
   // TEST MODE LOGIC (Only affects start time check)
   const testMode = String(config['TEST_MODE']).toUpperCase() === 'TRUE';
 
-  Logger.log(`Running mainJob. Status: ${status}, Hour: ${currentHour}, TestMode: ${testMode}`);
+  Logger.log(`Running mainJob. Status: ${status}, Day: ${currentDay}, Hour: ${currentHour}, TestMode: ${testMode}`);
 
   // 1. CHECK ALIVE TIME
-  // Normal mode: Check hour. Test mode: Always run if ALIVE.
-  const isTimeToCheck = (currentHour === checkHour) || testMode;
+  // Normal mode: Check hour AND (check day match OR no check day configured). Test mode: Always run if ALIVE.
+  const isDayMatch = (checkDay === null) || (currentDay === checkDay);
+  const isTimeToCheck = (isDayMatch && (currentHour === checkHour)) || testMode;
   
   if (isTimeToCheck && status === 'ALIVE') {
     // It's time to check!
@@ -127,14 +131,14 @@ function mainJob() {
 }
 
 // Helper to parse duration strings like "9h", "30m", or "24" (default hours)
-// Helper to parse duration strings like "9h", "30m", or "24" (default hours)
+// Helper to parse duration strings like "9h", "30m", "1w", "2d" or "24" (default hours)
 function parseDurationToMs(input) {
   if (!input) return 24 * 60 * 60 * 1000; // Default 24h
   
   const str = String(input).trim().toLowerCase();
   
-  // Regex to match "9.5", "30", "30m", "5h"
-  const match = str.match(/^([\d\.]+)\s*([mh]?)$/);
+  // Regex to match "9.5", "30", "30m", "5h", "1d", "2w"
+  const match = str.match(/^([\d\.]+)\s*([wdmh]?)$/);
   
   if (!match) {
     Logger.log(`Warning: Invalid duration format '${input}'. Defaulting to 24h.`);
@@ -144,12 +148,13 @@ function parseDurationToMs(input) {
   const val = Number(match[1]);
   const unit = match[2];
   
-  if (unit === 'm') {
-    return val * 60 * 1000; // Minutes
+  switch (unit) {
+    case 'w': return val * 7 * 24 * 60 * 60 * 1000;
+    case 'd': return val * 24 * 60 * 60 * 1000;
+    case 'm': return val * 60 * 1000;
+    case 'h': 
+    default:  return val * 60 * 60 * 1000;
   }
-  
-  // Default to hours (if unit is 'h' or empty)
-  return val * 60 * 60 * 1000; 
 }
 
 function triggerLegacyProtocol() {
@@ -278,6 +283,7 @@ function setupSheet() {
     shConfig.getRange(2, 1, 8, 2).setValues([
       ["TELEGRAM_BOT_TOKEN", ""],
       ["USER_CHAT_ID", ""],
+      ["CHECK_DAY", "1"],
       ["CHECK_TIME_HOUR", "9"],
       ["TIMEOUT_HOURS", "24"],
       ["MAX_RETRIES", "3"],

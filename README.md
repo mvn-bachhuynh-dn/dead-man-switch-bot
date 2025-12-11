@@ -1,5 +1,7 @@
 # Dead Man Switch Bot - Setup Guide
 
+[🇻🇳 Vietnamese Version](README.vi.md)
+
 This system ensures your legacy information is delivered to your beneficiaries if you stop responding to the bot.
 
 ## 1. Telegram Bot Setup
@@ -26,16 +28,64 @@ This system ensures your legacy information is delivered to your beneficiaries i
 5.  Copy the **Web App URL**.
 6.  Run the `setWebhook()` function (replace `YOUR_WEB_APP_URL` in the code temporarily or via prompt if you know how, simpler: hardcode it just for setup).
 
-## 4. Automation
-1.  In Apps Script, click **Triggers** (Alarm clock icon).
-2.  Add Trigger:
-    *   Function: `mainJob`
-    *   Event Source: **Time-driven**
-    *   Type: **Hour timer** -> **Every hour**.
+## 4. Trigger Setup (Mandatory)
+For the bot to run automatically, you must set up a Trigger as follows:
 
-## 5. Usage
-*   The bot will check every hour.
-*   If `Current Hour == CHECK_TIME_HOUR`, it sends "Bạn còn sống không? 🧟".
-*   You reply "Alive" or click the button.
-*   A5: `TIMEOUT_HOURS` | B5: `24` (Wait 24h). Support suffixes: `30m` (30 mins), `9h` (9 hours). Default is hours if no suffix.
-*   If you don't reply after `TIMEOUT_HOURS` * `MAX_RETRIES`, emails are sent.
+1.  In Apps Script, click **Triggers** (Alarm clock icon on the left).
+2.  Click **+ Add Trigger** (bottom right).
+3.  Configure as follows:
+    *   Choose which function to run: `mainJob`
+    *   Select event source: **Time-driven**
+    *   Select type of time based trigger: **Hour timer**
+    *   Select hour interval: **Every hour**
+4.  Click **Save**.
+
+> [!NOTE]
+> You must select **Every hour** even if you configure a monthly check. The script will automatically check if today is the scheduled day. If you choose a differnet timer, the bot may not run at your configured hour.
+
+### Trigger Optimization (Advanced)
+If you are using **Monthly/Weekly Checks** (long timeouts) and want to save script execution quota, you can choose:
+*   Select type of time based trigger: **Day timer**
+*   Select time of day: **9am to 10am** (Or the time matching your `CHECK_TIME_HOUR`)
+
+**Note:** This only works if your `TIMEOUT_HOURS` is in Days (d) or Weeks (w). If you start using short timeouts (e.g., 30m), this setting will cause delayed notifications.
+
+## 5. Usage & Configuration
+In the "Config" Sheet, you can customize:
+
+*   **CHECK_DAY**: (Optional) Enter a day (1-31) to check only on that day of the month. Leave empty to check every day.
+*   **CHECK_TIME_HOUR**: The hour (0-23) to send the check.
+*   **TIMEOUT_HOURS**: Time to wait for a reply. Supports:
+    *   `1w` (1 week)
+    *   `3d` (3 days)
+    *   `9h` (9 hours)
+    *   `30m` (30 minutes)
+    *   Default is hours if no suffix.
+*   **MAX_RETRIES**: Number of reminders to send before declaring DEAD.
+
+### Configuration Examples
+
+#### 1. Monthly Check, Weekly Reminder
+*   **CHECK_DAY**: `1` (Check on the 1st of every month)
+*   **CHECK_TIME_HOUR**: `9` (at 9 AM)
+*   **TIMEOUT_HOURS**: `1w` (Wait 7 days for a reply before the next reminder)
+*   **MAX_RETRIES**: `3` (Remind 3 times = 3 weeks total pending time)
+
+#### 2. Daily Check
+*   **CHECK_DAY**: (Empty)
+*   **TIMEOUT_HOURS**: `24`
+
+#### 3. Test Mode (Fast Debugging)
+Purpose: Verify that the bot is running, sending messages, and sending emails correctly without waiting for weeks.
+
+*   **Sheet Configuration**:
+    *   **TEST_MODE**: `TRUE` (Bypasses hour check, runs logic immediately)
+    *   **CHECK_DAY**: (Empty)
+    *   **TIMEOUT_HOURS**: `2m` (Wait 2 minutes for reply)
+    *   **MAX_RETRIES**: `3` (After 3 reminders x 2 mins = 6 mins, email will be triggered)
+*   **Trigger Configuration**:
+    *   Select type of time based trigger: **Minute timer**
+    *   Select minute interval: **Every minute**
+*   **⚠️ IMPORTANT**:
+    *   Change the beneficiary email in `Beneficiaries` sheet to your own secondary email for testing. Do not alarm your actual beneficiaries!
+    *   After testing, set `TEST_MODE` back to `FALSE`, revert Trigger to `Hour timer`, and reset your timeout settings.
