@@ -6,18 +6,28 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 
 ## 1. Cài đặt Telegram Bot
 1.  Chat với **@BotFather** trên Telegram.
+    ![Search BotFather](images/telegram_search_botfather.png)
 2.  Gửi lệnh `/newbot` và làm theo hướng dẫn để lấy **Bot Token**.
+    ![Get Token](images/telegram_newbot_token.png)
 3.  Tìm bot mới tạo của bạn và bấm **Start**.
+    ![Start Bot](images/telegram_start_bot.png)
+
+
 4.  Lấy **Chat ID** của bạn (bạn có thể dùng @userinfobot hoặc xem log sau này).
 
-    ![BotFather](images/botfather.png)
+    ![Get Chat ID](images/telegram_userinfobot.png)
 
 ## 2. Cài đặt Google Sheet
 1.  Tạo một Google Sheet mới, trống.
 2.  Script sẽ tự động tạo các sheet và cột cần thiết ở bước sau.
 
+    ![Create New Sheet](images/create_new_sheet.png)
+
 ## 3. Triển khai Script
 1.  Mở **Extensions (Tiện ích mở rộng) > Apps Script**.
+    
+    ![Extensions Menu](images/extensions_menu.png)
+
 2.  Copy toàn bộ code từ file `src/Code.gs` trong thư mục này vào trình soạn thảo script.
 3.  **Chạy Cài đặt**:
     *   Reload (F5) lại trang Google Sheet.
@@ -37,6 +47,8 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 
 5.  Copy **Web App URL**.
 6.  Chạy hàm `setWebhook()` (thay thế `YOUR_WEB_APP_URL` trong code bằng URL vừa copy, hoặc hardcode tạm để chạy setup).
+
+    ![Run setWebhook](images/run_setwebhook.png)
 
 ## 4. Cài đặt Trigger (Bắt buộc)
 Để bot tự động chạy, bạn phải cài đặt Trigger theo đúng hướng dẫn sau:
@@ -75,6 +87,8 @@ Trong Sheet "Config", bạn có thể tùy chỉnh:
     *   Mặc định là giờ nếu không có đơn vị.
 *   **MAX_RETRIES**: Số lần nhắc nhở trước khi tuyên bố DEAD (Đã mất).
 
+![Config Sheet Example](images/config_sheet_demo.png)
+
 ### Các Ví dụ Cấu hình
 
 #### 1. Kiểm tra Hàng tháng, Nhắc nhở Hàng tuần (Yêu cầu phổ biến)
@@ -98,6 +112,8 @@ Mục đích: Kiểm tra xem bot có hoạt động, gửi tin nhắn và gửi 
 *   **Cấu hình Trigger**:
     *   Select type of time based trigger: **Minute timer**
     *   Select minute interval: **Every minute**
+
+    ![Test Mode Config](images/config_sheet_test_mode.png)
 *   **⚠️ QUAN TRỌNG**:
     *   Hãy đổi email người nhận trong sheet `Beneficiaries` thành email phụ của bạn để test. Đừng gửi cho người thân thật lúc này!
     *   Sau khi test xong, nhớ tắt `TEST_MODE` (`FALSE`), đổi lại Trigger sang `Hour timer` và cập nhật lại thời gian timeout.

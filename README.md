@@ -6,15 +6,22 @@ This system ensures your legacy information is delivered to your beneficiaries i
 
 ## 1. Telegram Bot Setup
 1.  Chat with **@BotFather** on Telegram.
+    ![Search BotFather](images/telegram_search_botfather.png)
 2.  Send `/newbot` and follow instructions to get your **Bot Token**.
+    ![Get Token](images/telegram_newbot_token.png)
 3.  Search for your new bot and click **Start**.
+    ![Start Bot](images/telegram_start_bot.png)
+
+
 4.  Get your **Chat ID** (you can use @userinfobot or look at logs later).
 
-    ![BotFather](images/botfather.png)
+    ![Get Chat ID](images/telegram_userinfobot.png)
 
 ## 2. Google Sheet Setup
 1.  Create a new, empty Google Sheet.
 2.  The script will automatically create the necessary sheets and columns for you in the next step.
+
+    ![Create New Sheet](images/create_new_sheet.png)
 
 ## 3. Deploy Script
 1.  Open **Extensions > Apps Script**.
@@ -35,6 +42,8 @@ This system ensures your legacy information is delivered to your beneficiaries i
 
 5.  Copy the **Web App URL**.
 6.  Run the `setWebhook()` function (replace `YOUR_WEB_APP_URL` in the code temporarily or via prompt if you know how, simpler: hardcode it just for setup).
+
+    ![Run setWebhook](images/run_setwebhook.png)
 
 ## 4. Trigger Setup (Mandatory)
 For the bot to run automatically, you must set up a Trigger as follows:
@@ -73,6 +82,8 @@ In the "Config" Sheet, you can customize:
     *   Default is hours if no suffix.
 *   **MAX_RETRIES**: Number of reminders to send before declaring DEAD.
 
+![Config Sheet Example](images/config_sheet_demo.png)
+
 ### Configuration Examples
 
 #### 1. Monthly Check, Weekly Reminder
@@ -96,6 +107,8 @@ Purpose: Verify that the bot is running, sending messages, and sending emails co
 *   **Trigger Configuration**:
     *   Select type of time based trigger: **Minute timer**
     *   Select minute interval: **Every minute**
+
+    ![Test Mode Config](images/config_sheet_test_mode.png)
 *   **⚠️ IMPORTANT**:
     *   Change the beneficiary email in `Beneficiaries` sheet to your own secondary email for testing. Do not alarm your actual beneficiaries!
     *   After testing, set `TEST_MODE` back to `FALSE`, revert Trigger to `Hour timer`, and reset your timeout settings.
