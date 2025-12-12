@@ -10,6 +10,8 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 3.  Tìm bot mới tạo của bạn và bấm **Start**.
 4.  Lấy **Chat ID** của bạn (bạn có thể dùng @userinfobot hoặc xem log sau này).
 
+    ![BotFather](images/botfather.png)
+
 ## 2. Cài đặt Google Sheet
 1.  Tạo một Google Sheet mới, trống.
 2.  Script sẽ tự động tạo các sheet và cột cần thiết ở bước sau.
@@ -22,11 +24,17 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Bạn sẽ thấy menu **"Dead Man Bot"** xuất hiện trên thanh công cụ (sau vài giây).
     *   Bấm **Dead Man Bot > Setup Sheet**.
     *   Script sẽ tự động tạo sheet "Config" và "Beneficiaries" cùng định dạng cần thiết.
+    
+    ![Sheet Menu](images/sheet_menu.png)
+
 4.  **Deploy (Triển khai)**:
     *   Bấm **Deploy > New Deployment**.
     *   Select type: **Web App**.
     *   Execute as: **Me (Tôi)**.
     *   Who has access: **Anyone (Bất kỳ ai)**.
+    
+    ![Deploy Web App](images/deploy_webapp.png)
+
 5.  Copy **Web App URL**.
 6.  Chạy hàm `setWebhook()` (thay thế `YOUR_WEB_APP_URL` trong code bằng URL vừa copy, hoặc hardcode tạm để chạy setup).
 
@@ -41,6 +49,8 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Select type of time based trigger: **Hour timer**
     *   Select hour interval: **Every hour**
 4.  Bấm **Save**.
+
+![Trigger Setup](images/trigger_setup.png)
 
 > [!NOTE]
 > Bạn phải chọn **Every hour (Mỗi giờ)** ngay cả khi bạn cấu hình kiểm tra theo tháng. Script sẽ tự động kiểm tra xem hôm nay có phải là ngày cần chạy không. Nếu bạn chọn timer khác, bot có thể sẽ không chạy đúng giờ cấu hình.

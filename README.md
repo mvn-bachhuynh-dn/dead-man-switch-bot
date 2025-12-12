@@ -10,6 +10,8 @@ This system ensures your legacy information is delivered to your beneficiaries i
 3.  Search for your new bot and click **Start**.
 4.  Get your **Chat ID** (you can use @userinfobot or look at logs later).
 
+    ![BotFather](images/botfather.png)
+
 ## 2. Google Sheet Setup
 1.  Create a new, empty Google Sheet.
 2.  The script will automatically create the necessary sheets and columns for you in the next step.
@@ -22,9 +24,15 @@ This system ensures your legacy information is delivered to your beneficiaries i
     *   You should see a new menu **"Dead Man Bot"** appear in the toolbar (after a few seconds).
     *   Click **Dead Man Bot > Setup Sheet**.
     *   The script will automatically create the "Config" and "Beneficiaries" sheets and formatting for you.
+    
+    ![Sheet Menu](images/sheet_menu.png)
+
 4.  **Deploy > New Deployment** > Select **Web App**.
     *   Execute as: **Me**.
     *   Who has access: **Anyone**.
+    
+    ![Deploy Web App](images/deploy_webapp.png)
+
 5.  Copy the **Web App URL**.
 6.  Run the `setWebhook()` function (replace `YOUR_WEB_APP_URL` in the code temporarily or via prompt if you know how, simpler: hardcode it just for setup).
 
@@ -39,6 +47,8 @@ For the bot to run automatically, you must set up a Trigger as follows:
     *   Select type of time based trigger: **Hour timer**
     *   Select hour interval: **Every hour**
 4.  Click **Save**.
+
+![Trigger Setup](images/trigger_setup.png)
 
 > [!NOTE]
 > You must select **Every hour** even if you configure a monthly check. The script will automatically check if today is the scheduled day. If you choose a differnet timer, the bot may not run at your configured hour.
