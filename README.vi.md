@@ -19,9 +19,9 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 
 ## 2. Cài đặt Google Sheet
 1.  Tạo một Google Sheet mới, trống.
+    ![Create New Sheet](images/create_new_sheet.png)
 2.  Script sẽ tự động tạo các sheet và cột cần thiết ở bước sau.
 
-    ![Create New Sheet](images/create_new_sheet.png)
 
 ## 3. Triển khai Script
 1.  Mở **Extensions (Tiện ích mở rộng) > Apps Script**.
@@ -47,8 +47,10 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 
 5.  Copy **Web App URL**.
 6.  Chạy hàm `setWebhook()` (thay thế `YOUR_WEB_APP_URL` trong code bằng URL vừa copy, hoặc hardcode tạm để chạy setup).
-
-    ![Run setWebhook](images/run_setwebhook.png)
+    ```
+      376: // replace with your web app url
+      377: const url = "YOUR_WEB_APP_URL_HERE"; ```   
+  ![Run setWebhook](images/run_setwebhook.png)
 
 ## 4. Cài đặt Trigger (Bắt buộc)
 Để bot tự động chạy, bạn phải cài đặt Trigger theo đúng hướng dẫn sau:
@@ -87,6 +89,7 @@ Trong Sheet "Config", bạn có thể tùy chỉnh:
     *   Mặc định là giờ nếu không có đơn vị.
 *   **MAX_RETRIES**: Số lần nhắc nhở trước khi tuyên bố DEAD (Đã mất).
 
+Nếu config như hình dưới thì tôi muốn bot gửi tin nhắn kiểm tra hàng tháng vào ngày 12 của tháng, khoảng 9h sáng, và nếu không có phản hồi sẽ nhắc 3 lần sau mỗi 24h. Nếu vẫn không có phản hồi, bot sẽ gửi email thông báo.
 ![Config Sheet Example](images/config_sheet_demo.png)
 
 ### Các Ví dụ Cấu hình
@@ -96,10 +99,16 @@ Trong Sheet "Config", bạn có thể tùy chỉnh:
 *   **CHECK_TIME_HOUR**: `9` (lúc 9 giờ sáng)
 *   **TIMEOUT_HOURS**: `1w` (Nếu không trả lời, đợi 7 ngày sau mới nhắc lại)
 *   **MAX_RETRIES**: `3` (Nhắc 3 lần = 3 tuần dây dưa)
+*   **Cấu hình Trigger**:
+    *   Select type of time based trigger: **Hour timer**
+    *   Select hour interval: **Every hour**
 
 #### 2. Kiểm tra Hàng ngày
 *   **CHECK_DAY**: (Để trống)
 *   **TIMEOUT_HOURS**: `24`
+*   **Cấu hình Trigger**:
+    *   Select type of time based trigger: **Hour timer**
+    *   Select hour interval: **Every hour**
 
 #### 3. Chế độ Test (Chạy thử nhanh)
 Mục đích: Kiểm tra xem bot có hoạt động, gửi tin nhắn và gửi email đúng không mà không cần chờ cả tuần.
@@ -113,7 +122,6 @@ Mục đích: Kiểm tra xem bot có hoạt động, gửi tin nhắn và gửi 
     *   Select type of time based trigger: **Minute timer**
     *   Select minute interval: **Every minute**
 
-    ![Test Mode Config](images/config_sheet_test_mode.png)
 *   **⚠️ QUAN TRỌNG**:
     *   Hãy đổi email người nhận trong sheet `Beneficiaries` thành email phụ của bạn để test. Đừng gửi cho người thân thật lúc này!
     *   Sau khi test xong, nhớ tắt `TEST_MODE` (`FALSE`), đổi lại Trigger sang `Hour timer` và cập nhật lại thời gian timeout.

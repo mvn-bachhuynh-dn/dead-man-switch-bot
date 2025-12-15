@@ -82,6 +82,7 @@ In the "Config" Sheet, you can customize:
     *   Default is hours if no suffix.
 *   **MAX_RETRIES**: Number of reminders to send before declaring DEAD.
 
+If configured as shown below, I want the bot to send a monthly check-in message on the 12th of each month at around 9:00 AM. If there is no response, the bot should send up to three reminders, each 24 hours apart. If there is still no response after that, the bot should send a notification email.
 ![Config Sheet Example](images/config_sheet_demo.png)
 
 ### Configuration Examples
@@ -91,10 +92,16 @@ In the "Config" Sheet, you can customize:
 *   **CHECK_TIME_HOUR**: `9` (at 9 AM)
 *   **TIMEOUT_HOURS**: `1w` (Wait 7 days for a reply before the next reminder)
 *   **MAX_RETRIES**: `3` (Remind 3 times = 3 weeks total pending time)
+*   **Trigger Configuration**:
+    *   Select type of time based trigger: **Hour timer**
+    *   Select hour interval: **Every hour**
 
 #### 2. Daily Check
 *   **CHECK_DAY**: (Empty)
 *   **TIMEOUT_HOURS**: `24`
+*   **Trigger Configuration**:
+    *   Select type of time based trigger: **Hour timer**
+    *   Select hour interval: **Every hour**
 
 #### 3. Test Mode (Fast Debugging)
 Purpose: Verify that the bot is running, sending messages, and sending emails correctly without waiting for weeks.
@@ -108,7 +115,6 @@ Purpose: Verify that the bot is running, sending messages, and sending emails co
     *   Select type of time based trigger: **Minute timer**
     *   Select minute interval: **Every minute**
 
-    ![Test Mode Config](images/config_sheet_test_mode.png)
 *   **⚠️ IMPORTANT**:
     *   Change the beneficiary email in `Beneficiaries` sheet to your own secondary email for testing. Do not alarm your actual beneficiaries!
     *   After testing, set `TEST_MODE` back to `FALSE`, revert Trigger to `Hour timer`, and reset your timeout settings.
