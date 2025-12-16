@@ -21,7 +21,7 @@ This system ensures your legacy information is delivered to your beneficiaries i
 1.  Create a new, empty Google Sheet.
 2.  The script will automatically create the necessary sheets and columns for you in the next step.
 
-    ![Create New Sheet](images/create_new_sheet.png)
+    ![Create New Sheet](images/create_new_sheet.jpeg)
 
 ## 3. Deploy Script
 1.  Open **Extensions > Apps Script**.
@@ -38,7 +38,7 @@ This system ensures your legacy information is delivered to your beneficiaries i
     *   Execute as: **Me**.
     *   Who has access: **Anyone**.
     
-    ![Deploy Web App](images/deploy_webapp.png)
+    ![Deploy Web App](images/deploy_webapp.jpeg)
 
 5.  Copy the **Web App URL**.
 6.  Run the `setWebhook()` function (replace `YOUR_WEB_APP_URL` in the code temporarily or via prompt if you know how, simpler: hardcode it just for setup).
@@ -57,7 +57,7 @@ For the bot to run automatically, you must set up a Trigger as follows:
     *   Select hour interval: **Every hour**
 4.  Click **Save**.
 
-![Trigger Setup](images/trigger_setup.png)
+![Trigger Setup](images/trigger_setup.jpeg)
 
 > [!NOTE]
 > You must select **Every hour** even if you configure a monthly check. The script will automatically check if today is the scheduled day. If you choose a differnet timer, the bot may not run at your configured hour.

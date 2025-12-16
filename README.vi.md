@@ -6,6 +6,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 
 ## 1. Cài đặt Telegram Bot
 1.  Chat với **@BotFather** trên Telegram.
+    
     ![Search BotFather](images/telegram_search_botfather.png)
 2.  Gửi lệnh `/newbot` và làm theo hướng dẫn để lấy **Bot Token**.
     ![Get Token](images/telegram_newbot_token.png)
@@ -19,14 +20,14 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 
 ## 2. Cài đặt Google Sheet
 1.  Tạo một Google Sheet mới, trống.
-    ![Create New Sheet](images/create_new_sheet.png)
+    ![Create New Sheet](images/create_new_sheet.jpeg)
 2.  Script sẽ tự động tạo các sheet và cột cần thiết ở bước sau.
 
 
 ## 3. Triển khai Script
 1.  Mở **Extensions (Tiện ích mở rộng) > Apps Script**.
     
-    ![Extensions Menu](images/extensions_menu.png)
+    ![Extensions Menu](images/extensions_menu.jpeg)
 
 2.  Copy toàn bộ code từ file `src/Code.gs` trong thư mục này vào trình soạn thảo script.
 3.  **Chạy Cài đặt**:
@@ -43,7 +44,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Execute as: **Me (Tôi)**.
     *   Who has access: **Anyone (Bất kỳ ai)**.
     
-    ![Deploy Web App](images/deploy_webapp.png)
+    ![Deploy Web App](images/deploy_webapp.jpeg)
 
 5.  Copy **Web App URL**.
 6.  Chạy hàm `setWebhook()` (thay thế `YOUR_WEB_APP_URL` trong code bằng URL vừa copy, hoặc hardcode tạm để chạy setup).
