@@ -46,7 +46,7 @@ This system ensures your legacy information is delivered to your beneficiaries i
 
 ## 3. Deploy Script
 1.  Open **Extensions > Apps Script**.
-2.  Copy the code from `src/Code.gs` in this folder into the script editor.
+2.  Copy the code from `src/Code.en.gs` in this folder into the script editor.
 3.  **Run Setup**:
     *   Reload your Google Sheet.
     *   You should see a new menu **"Dead Man Bot"** appear in the toolbar (after a few seconds).

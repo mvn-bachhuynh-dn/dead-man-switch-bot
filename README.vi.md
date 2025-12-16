@@ -52,7 +52,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
       <img src="images/extensions_menu.jpeg" width="50%">
     </p>
 
-2.  Copy toàn bộ code từ file `src/Code.gs` trong thư mục này vào trình soạn thảo script.
+2.  Copy toàn bộ code từ file `src/Code.vi.gs` trong thư mục này vào trình soạn thảo script.
 3.  **Chạy Cài đặt**:
     *   Reload (F5) lại trang Google Sheet.
     *   Bạn sẽ thấy menu **"Dead Man Bot"** xuất hiện trên thanh công cụ (sau vài giây).
