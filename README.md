@@ -150,7 +150,7 @@ If you find this project helpful, please consider buying me a coffee! ☕
 
 *   **Bank Transfer (Vietnam)**: `QR Code`
 <p align="center">
-  <img src="images/vietcombank.png" width="50%">
+  <img src="images/vietcombank.png" width="20%">
 </p>
 
 *   **PayPal**: `foureye2004@gmail.com`

@@ -160,5 +160,5 @@ Nếu bạn thấy dự án này hữu ích, hãy ủng hộ tôi 1 ly cà phê 
 
 *   **Bank Account**: `QR Code`
 <p align="center">
-  <img src="images/vietcombank.png" width="50%">
+  <img src="images/vietcombank.png" width="20%">
 </p>
