@@ -158,5 +158,7 @@ Nếu bạn thấy dự án này hữu ích, hãy ủng hộ tôi 1 ly cà phê 
   </a>
 </p>
 
-*   **Bank Account**: `[Điền thông tin ngân hàng của bạn]`
-*   **Momo**: `[Điền số Momo]`
+*   **Bank Account**: `QR Code`
+<p align="center">
+  <img src="images/vietcombank.png" width="50%">
+</p>

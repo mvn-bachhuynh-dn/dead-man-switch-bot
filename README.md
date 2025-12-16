@@ -148,5 +148,9 @@ If you find this project helpful, please consider buying me a coffee! ☕
   </a>
 </p>
 
-*   **Bank Transfer**: `[Your Bank Details]`
-*   **PayPal**: `[Your PayPal Link]`
+*   **Bank Transfer (Vietnam)**: `QR Code`
+<p align="center">
+  <img src="images/vietcombank.png" width="50%">
+</p>
+
+*   **PayPal**: `foureye2004@gmail.com`
