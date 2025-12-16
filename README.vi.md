@@ -148,3 +148,15 @@ Mục đích: Kiểm tra xem bot có hoạt động, gửi tin nhắn và gửi 
 *   **⚠️ QUAN TRỌNG**:
     *   Hãy đổi email người nhận trong sheet `Beneficiaries` thành email phụ của bạn để test. Đừng gửi cho người thân thật lúc này!
     *   Sau khi test xong, nhớ tắt `TEST_MODE` (`FALSE`), đổi lại Trigger sang `Hour timer` và cập nhật lại thời gian timeout.
+
+## 6. Donation (Ủng hộ)
+Nếu bạn thấy dự án này hữu ích, hãy ủng hộ tôi 1 ly cà phê nhé! ☕
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
+  </a>
+</p>
+
+*   **Bank Account**: `[Điền thông tin ngân hàng của bạn]`
+*   **Momo**: `[Điền số Momo]`

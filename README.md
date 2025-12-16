@@ -138,3 +138,15 @@ Purpose: Verify that the bot is running, sending messages, and sending emails co
 *   **⚠️ IMPORTANT**:
     *   Change the beneficiary email in `Beneficiaries` sheet to your own secondary email for testing. Do not alarm your actual beneficiaries!
     *   After testing, set `TEST_MODE` back to `FALSE`, revert Trigger to `Hour timer`, and reset your timeout settings.
+
+## 6. Donation
+If you find this project helpful, please consider buying me a coffee! ☕
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
+  </a>
+</p>
+
+*   **Bank Transfer**: `[Your Bank Details]`
+*   **PayPal**: `[Your PayPal Link]`
