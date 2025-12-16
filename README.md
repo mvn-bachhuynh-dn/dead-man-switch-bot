@@ -6,22 +6,32 @@ This system ensures your legacy information is delivered to your beneficiaries i
 
 ## 1. Telegram Bot Setup
 1.  Chat with **@BotFather** on Telegram.
-    ![Search BotFather](images/telegram_search_botfather.png)
+    <p align="center">
+      <img src="images/telegram_search_botfather.png" width="80%">
+    </p>
 2.  Send `/newbot` and follow instructions to get your **Bot Token**.
-    ![Get Token](images/telegram_newbot_token.png)
+    <p align="center">
+      <img src="images/telegram_newbot_token.png" width="80%">
+    </p>
 3.  Search for your new bot and click **Start**.
-    ![Start Bot](images/telegram_start_bot.png)
+    <p align="center">
+      <img src="images/telegram_start_bot.png" width="80%">
+    </p>
 
 
 4.  Get your **Chat ID** (you can use @userinfobot or look at logs later).
 
-    ![Get Chat ID](images/telegram_userinfobot.png)
+    <p align="center">
+      <img src="images/telegram_userinfobot.png" width="80%">
+    </p>
 
 ## 2. Google Sheet Setup
 1.  Create a new, empty Google Sheet.
 2.  The script will automatically create the necessary sheets and columns for you in the next step.
 
-    ![Create New Sheet](images/create_new_sheet.jpeg)
+    <p align="center">
+      <img src="images/create_new_sheet.jpeg" width="100%">
+    </p>
 
 ## 3. Deploy Script
 1.  Open **Extensions > Apps Script**.
@@ -32,18 +42,24 @@ This system ensures your legacy information is delivered to your beneficiaries i
     *   Click **Dead Man Bot > Setup Sheet**.
     *   The script will automatically create the "Config" and "Beneficiaries" sheets and formatting for you.
     
-    ![Sheet Menu](images/sheet_menu.png)
+    <p align="center">
+      <img src="images/sheet_menu.png" width="100%">
+    </p>
 
 4.  **Deploy > New Deployment** > Select **Web App**.
     *   Execute as: **Me**.
     *   Who has access: **Anyone**.
     
-    ![Deploy Web App](images/deploy_webapp.jpeg)
+    <p align="center">
+      <img src="images/deploy_webapp.jpeg" width="100%">
+    </p>
 
 5.  Copy the **Web App URL**.
 6.  Run the `setWebhook()` function (replace `YOUR_WEB_APP_URL` in the code temporarily or via prompt if you know how, simpler: hardcode it just for setup).
 
-    ![Run setWebhook](images/run_setwebhook.png)
+    <p align="center">
+      <img src="images/run_setwebhook.png" width="100%">
+    </p>
 
 ## 4. Trigger Setup (Mandatory)
 For the bot to run automatically, you must set up a Trigger as follows:
@@ -57,7 +73,9 @@ For the bot to run automatically, you must set up a Trigger as follows:
     *   Select hour interval: **Every hour**
 4.  Click **Save**.
 
-![Trigger Setup](images/trigger_setup.jpeg)
+<p align="center">
+  <img src="images/trigger_setup.jpeg" width="100%">
+</p>
 
 > [!NOTE]
 > You must select **Every hour** even if you configure a monthly check. The script will automatically check if today is the scheduled day. If you choose a differnet timer, the bot may not run at your configured hour.
@@ -83,7 +101,9 @@ In the "Config" Sheet, you can customize:
 *   **MAX_RETRIES**: Number of reminders to send before declaring DEAD.
 
 If configured as shown below, I want the bot to send a monthly check-in message on the 12th of each month at around 9:00 AM. If there is no response, the bot should send up to three reminders, each 24 hours apart. If there is still no response after that, the bot should send a notification email.
-![Config Sheet Example](images/config_sheet_demo.png)
+<p align="center">
+  <img src="images/config_sheet_demo.png" width="100%">
+</p>
 
 ### Configuration Examples
 

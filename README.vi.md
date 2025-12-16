@@ -7,27 +7,39 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 ## 1. Cài đặt Telegram Bot
 1.  Chat với **@BotFather** trên Telegram.
     
-    ![Search BotFather](images/telegram_search_botfather.png)
+    <p align="center">
+      <img src="images/telegram_search_botfather.png" width="80%">
+    </p>
 2.  Gửi lệnh `/newbot` và làm theo hướng dẫn để lấy **Bot Token**.
-    ![Get Token](images/telegram_newbot_token.png)
+    <p align="center">
+      <img src="images/telegram_newbot_token.png" width="80%">
+    </p>
 3.  Tìm bot mới tạo của bạn và bấm **Start**.
-    ![Start Bot](images/telegram_start_bot.png)
+    <p align="center">
+      <img src="images/telegram_start_bot.png" width="80%">
+    </p>
 
 
 4.  Lấy **Chat ID** của bạn (bạn có thể dùng @userinfobot hoặc xem log sau này).
 
-    ![Get Chat ID](images/telegram_userinfobot.png)
+    <p align="center">
+      <img src="images/telegram_userinfobot.png" width="80%">
+    </p>
 
 ## 2. Cài đặt Google Sheet
 1.  Tạo một Google Sheet mới, trống.
-    ![Create New Sheet](images/create_new_sheet.jpeg)
+    <p align="center">
+      <img src="images/create_new_sheet.jpeg" width="100%">
+    </p>
 2.  Script sẽ tự động tạo các sheet và cột cần thiết ở bước sau.
 
 
 ## 3. Triển khai Script
 1.  Mở **Extensions (Tiện ích mở rộng) > Apps Script**.
     
-    ![Extensions Menu](images/extensions_menu.jpeg)
+    <p align="center">
+      <img src="images/extensions_menu.jpeg" width="100%">
+    </p>
 
 2.  Copy toàn bộ code từ file `src/Code.gs` trong thư mục này vào trình soạn thảo script.
 3.  **Chạy Cài đặt**:
@@ -36,7 +48,9 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Bấm **Dead Man Bot > Setup Sheet**.
     *   Script sẽ tự động tạo sheet "Config" và "Beneficiaries" cùng định dạng cần thiết.
     
-    ![Sheet Menu](images/sheet_menu.png)
+    <p align="center">
+      <img src="images/sheet_menu.png" width="100%">
+    </p>
 
 4.  **Deploy (Triển khai)**:
     *   Bấm **Deploy > New Deployment**.
@@ -44,14 +58,18 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Execute as: **Me (Tôi)**.
     *   Who has access: **Anyone (Bất kỳ ai)**.
     
-    ![Deploy Web App](images/deploy_webapp.jpeg)
+    <p align="center">
+      <img src="images/deploy_webapp.jpeg" width="100%">
+    </p>
 
 5.  Copy **Web App URL**.
 6.  Chạy hàm `setWebhook()` (thay thế `YOUR_WEB_APP_URL` trong code bằng URL vừa copy, hoặc hardcode tạm để chạy setup).
     ```
       376: // replace with your web app url
       377: const url = "YOUR_WEB_APP_URL_HERE"; ```   
-  ![Run setWebhook](images/run_setwebhook.png)
+  <p align="center">
+    <img src="images/run_setwebhook.png" width="100%">
+  </p>
 
 ## 4. Cài đặt Trigger (Bắt buộc)
 Để bot tự động chạy, bạn phải cài đặt Trigger theo đúng hướng dẫn sau:
@@ -65,7 +83,9 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Select hour interval: **Every hour**
 4.  Bấm **Save**.
 
-![Trigger Setup](images/trigger_setup.png)
+<p align="center">
+  <img src="images/trigger_setup.jpeg" width="100%">
+</p>
 
 > [!NOTE]
 > Bạn phải chọn **Every hour (Mỗi giờ)** ngay cả khi bạn cấu hình kiểm tra theo tháng. Script sẽ tự động kiểm tra xem hôm nay có phải là ngày cần chạy không. Nếu bạn chọn timer khác, bot có thể sẽ không chạy đúng giờ cấu hình.
@@ -91,7 +111,9 @@ Trong Sheet "Config", bạn có thể tùy chỉnh:
 *   **MAX_RETRIES**: Số lần nhắc nhở trước khi tuyên bố DEAD (Đã mất).
 
 Nếu config như hình dưới thì tôi muốn bot gửi tin nhắn kiểm tra hàng tháng vào ngày 12 của tháng, khoảng 9h sáng, và nếu không có phản hồi sẽ nhắc 3 lần sau mỗi 24h. Nếu vẫn không có phản hồi, bot sẽ gửi email thông báo.
-![Config Sheet Example](images/config_sheet_demo.png)
+<p align="center">
+  <img src="images/config_sheet_demo.png" width="100%">
+</p>
 
 ### Các Ví dụ Cấu hình
 
