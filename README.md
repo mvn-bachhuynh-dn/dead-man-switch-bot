@@ -7,22 +7,22 @@ This system ensures your legacy information is delivered to your beneficiaries i
 ## 1. Telegram Bot Setup
 1.  Chat with **@BotFather** on Telegram.
     <p align="center">
-      <img src="images/telegram_search_botfather.png" width="80%">
+      <img src="images/telegram_search_botfather.png" width="50%">
     </p>
 2.  Send `/newbot` and follow instructions to get your **Bot Token**.
     <p align="center">
-      <img src="images/telegram_newbot_token.png" width="80%">
+      <img src="images/telegram_newbot_token.png" width="50%">
     </p>
 3.  Search for your new bot and click **Start**.
     <p align="center">
-      <img src="images/telegram_start_bot.png" width="80%">
+      <img src="images/telegram_start_bot.png" width="50%">
     </p>
 
 
 4.  Get your **Chat ID** (you can use @userinfobot or look at logs later).
 
     <p align="center">
-      <img src="images/telegram_userinfobot.png" width="80%">
+      <img src="images/telegram_userinfobot.png" width="50%">
     </p>
 
 ## 2. Google Sheet Setup
@@ -30,7 +30,7 @@ This system ensures your legacy information is delivered to your beneficiaries i
 2.  The script will automatically create the necessary sheets and columns for you in the next step.
 
     <p align="center">
-      <img src="images/create_new_sheet.jpeg" width="100%">
+      <img src="images/create_new_sheet.jpeg" width="50%">
     </p>
 
 ## 3. Deploy Script
@@ -43,7 +43,7 @@ This system ensures your legacy information is delivered to your beneficiaries i
     *   The script will automatically create the "Config" and "Beneficiaries" sheets and formatting for you.
     
     <p align="center">
-      <img src="images/sheet_menu.png" width="100%">
+      <img src="images/sheet_menu.png" width="50%">
     </p>
 
 4.  **Deploy > New Deployment** > Select **Web App**.
@@ -51,14 +51,14 @@ This system ensures your legacy information is delivered to your beneficiaries i
     *   Who has access: **Anyone**.
     
     <p align="center">
-      <img src="images/deploy_webapp.jpeg" width="100%">
+      <img src="images/deploy_webapp.jpeg" width="50%">
     </p>
 
 5.  Copy the **Web App URL**.
 6.  Run the `setWebhook()` function (replace `YOUR_WEB_APP_URL` in the code temporarily or via prompt if you know how, simpler: hardcode it just for setup).
 
     <p align="center">
-      <img src="images/run_setwebhook.png" width="100%">
+      <img src="images/run_setwebhook.png" width="50%">
     </p>
 
 ## 4. Trigger Setup (Mandatory)
@@ -74,7 +74,7 @@ For the bot to run automatically, you must set up a Trigger as follows:
 4.  Click **Save**.
 
 <p align="center">
-  <img src="images/trigger_setup.jpeg" width="100%">
+  <img src="images/trigger_setup.jpeg" width="50%">
 </p>
 
 > [!NOTE]
@@ -102,7 +102,7 @@ In the "Config" Sheet, you can customize:
 
 If configured as shown below, I want the bot to send a monthly check-in message on the 12th of each month at around 9:00 AM. If there is no response, the bot should send up to three reminders, each 24 hours apart. If there is still no response after that, the bot should send a notification email.
 <p align="center">
-  <img src="images/config_sheet_demo.png" width="100%">
+  <img src="images/config_sheet_demo.png" width="50%">
 </p>
 
 ### Configuration Examples

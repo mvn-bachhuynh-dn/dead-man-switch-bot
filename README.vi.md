@@ -8,28 +8,28 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 1.  Chat với **@BotFather** trên Telegram.
     
     <p align="center">
-      <img src="images/telegram_search_botfather.png" width="80%">
+      <img src="images/telegram_search_botfather.png" width="50%">
     </p>
 2.  Gửi lệnh `/newbot` và làm theo hướng dẫn để lấy **Bot Token**.
     <p align="center">
-      <img src="images/telegram_newbot_token.png" width="80%">
+      <img src="images/telegram_newbot_token.png" width="50%">
     </p>
 3.  Tìm bot mới tạo của bạn và bấm **Start**.
     <p align="center">
-      <img src="images/telegram_start_bot.png" width="80%">
+      <img src="images/telegram_start_bot.png" width="50%">
     </p>
 
 
 4.  Lấy **Chat ID** của bạn (bạn có thể dùng @userinfobot hoặc xem log sau này).
 
     <p align="center">
-      <img src="images/telegram_userinfobot.png" width="80%">
+      <img src="images/telegram_userinfobot.png" width="50%">
     </p>
 
 ## 2. Cài đặt Google Sheet
 1.  Tạo một Google Sheet mới, trống.
     <p align="center">
-      <img src="images/create_new_sheet.jpeg" width="100%">
+      <img src="images/create_new_sheet.jpeg" width="50%">
     </p>
 2.  Script sẽ tự động tạo các sheet và cột cần thiết ở bước sau.
 
@@ -38,7 +38,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 1.  Mở **Extensions (Tiện ích mở rộng) > Apps Script**.
     
     <p align="center">
-      <img src="images/extensions_menu.jpeg" width="100%">
+      <img src="images/extensions_menu.jpeg" width="50%">
     </p>
 
 2.  Copy toàn bộ code từ file `src/Code.gs` trong thư mục này vào trình soạn thảo script.
@@ -49,7 +49,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Script sẽ tự động tạo sheet "Config" và "Beneficiaries" cùng định dạng cần thiết.
     
     <p align="center">
-      <img src="images/sheet_menu.png" width="100%">
+      <img src="images/sheet_menu.png" width="50%">
     </p>
 
 4.  **Deploy (Triển khai)**:
@@ -59,7 +59,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Who has access: **Anyone (Bất kỳ ai)**.
     
     <p align="center">
-      <img src="images/deploy_webapp.jpeg" width="100%">
+      <img src="images/deploy_webapp.jpeg" width="50%">
     </p>
 
 5.  Copy **Web App URL**.
@@ -68,7 +68,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
       376: // replace with your web app url
       377: const url = "YOUR_WEB_APP_URL_HERE"; ```   
   <p align="center">
-    <img src="images/run_setwebhook.png" width="100%">
+    <img src="images/run_setwebhook.png" width="50%">
   </p>
 
 ## 4. Cài đặt Trigger (Bắt buộc)
@@ -84,7 +84,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
 4.  Bấm **Save**.
 
 <p align="center">
-  <img src="images/trigger_setup.jpeg" width="100%">
+  <img src="images/trigger_setup.jpeg" width="50%">
 </p>
 
 > [!NOTE]
@@ -112,7 +112,7 @@ Trong Sheet "Config", bạn có thể tùy chỉnh:
 
 Nếu config như hình dưới thì tôi muốn bot gửi tin nhắn kiểm tra hàng tháng vào ngày 12 của tháng, khoảng 9h sáng, và nếu không có phản hồi sẽ nhắc 3 lần sau mỗi 24h. Nếu vẫn không có phản hồi, bot sẽ gửi email thông báo.
 <p align="center">
-  <img src="images/config_sheet_demo.png" width="100%">
+  <img src="images/config_sheet_demo.png" width="50%">
 </p>
 
 ### Các Ví dụ Cấu hình
