@@ -2,6 +2,17 @@
 
 [🇺🇸 English Version](README.md)
 
+> **Giới thiệu về Dead Man Switch Bot**
+>
+> Trong cuộc sống, điều không may mắn có thể xảy ra bất cứ lúc nào. Dead Man Switch Bot được xây dựng với mục đích duy nhất: **đảm bảo những lời nhắn gửi, thông tin quan trọng (tài khoản, mật khẩu, quỹ dự phòng...) của bạn sẽ được gửi an toàn đến đúng người thân yêu nhất khi bạn không còn khả năng phản hồi.**
+>
+> **Tại sao bạn nên dùng Bot này mà không phải dịch vụ bên thứ 3?**
+> *   **100% Quyền riêng tư & Bảo mật**: Đây là giải pháp **Do-It-Yourself (Tự quản lý)**. Bạn là người duy nhất nắm giữ mã nguồn, dữ liệu và Google Sheet. Không có bên thứ ba nào (kể cả tác giả) có quyền truy cập vào thông tin nhạy cảm của bạn.
+> *   **An toàn tuyệt đối**: Dữ liệu của bạn nằm trên tài khoản Google của chính bạn. Không có server trung gian, không có nguy cơ rò rỉ dữ liệu từ phía nhà cung cấp dịch vụ.
+> *   **Miễn phí trọn đời**: Sử dụng hạ tầng sẵn có của Google (Apps Script, Sheets) và Telegram, hoàn toàn không tốn phí duy trì.
+>
+> Hãy dành 15 phút để thiết lập. Đó có thể là 15 phút quan trọng nhất để bảo vệ tương lai cho những người thân yêu của bạn.
+
 Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được gửi đến người thụ hưởng nếu bạn ngừng phản hồi bot.
 
 ## 1. Cài đặt Telegram Bot
@@ -153,7 +164,7 @@ Mục đích: Kiểm tra xem bot có hoạt động, gửi tin nhắn và gửi 
 Nếu bạn thấy dự án này hữu ích, hãy ủng hộ tôi 1 ly cà phê nhé! ☕
 
 <p align="center">
-  <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank">
+  <a href="https://buymeacoffee.com/stevehuynh" target="_blank">
     <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
   </a>
 </p>

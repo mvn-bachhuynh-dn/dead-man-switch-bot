@@ -2,6 +2,17 @@
 
 [🇻🇳 Vietnamese Version](README.vi.md)
 
+> **About Dead Man Switch Bot**
+>
+> Life is unpredictable. The Dead Man Switch Bot is built with a singular purpose: **to ensure that your final messages and critical information (accounts, passwords, emergency funds...) are safely delivered to your trusted beneficiaries if you become unresponsive.**
+>
+> **Why use this Bot instead of a third-party service?**
+> *   **100% Privacy & Security**: This is a **Do-It-Yourself (Self-hosted)** solution. You are the sole owner of the source code, data, and Google Sheet. No third party (including the author) has access to your sensitive information.
+> *   **Zero Trust Required**: Your data resides entirely within your own Google account. There are no intermediary servers, eliminating the risk of data breaches from service providers.
+> *   **Free Forever**: Leveraging Google's free infrastructure (Apps Script, Sheets) and Telegram, there are no maintenance costs.
+>
+> Take 15 minutes to set this up. It might be the most important 15 minutes you spend to secure the future for your loved ones.
+
 This system ensures your legacy information is delivered to your beneficiaries if you stop responding to the bot.
 
 ## 1. Telegram Bot Setup
@@ -143,7 +154,7 @@ Purpose: Verify that the bot is running, sending messages, and sending emails co
 If you find this project helpful, please consider buying me a coffee! ☕
 
 <p align="center">
-  <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank">
+  <a href="https://buymeacoffee.com/stevehuynh" target="_blank">
     <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
   </a>
 </p>
