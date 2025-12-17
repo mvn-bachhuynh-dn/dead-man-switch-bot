@@ -21,7 +21,7 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     <p align="center">
       <img src="images/telegram_search_botfather.png" width="50%">
     </p>
-2.  Gửi lệnh `/newbot` và làm theo hướng dẫn để lấy **Bot Token**.
+2.  Gửi lệnh `/newbot` và làm theo hướng dẫn để lấy **Bot Token**.(Lưu lại để sử dụng cho bước sau, giữ an toàn, không chia sẻ với bất kỳ ai)
     <p align="center">
       <img src="images/telegram_newbot_token.png" width="50%">
     </p>
@@ -58,11 +58,28 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     *   Bạn sẽ thấy menu **"Dead Man Bot"** xuất hiện trên thanh công cụ (sau vài giây).
     *   Bấm **Dead Man Bot > Setup Sheet**.
     *   Script sẽ tự động tạo sheet "Config" và "Beneficiaries" cùng định dạng cần thiết.
-    
+
     <p align="center">
       <img src="images/sheet_menu.png" width="50%">
     </p>
 
+    *   Cấu hình các thông số cần thiết trong sheet "Config". Từ các bước đã thực hiện trước đó.
+
+    <p align="center">
+      <img src="images/config_sheet_init.png" width="50%">
+    </p>
+| Key | Mô tả |
+| :--- | :--- |
+| **TELEGRAM_BOT_TOKEN** | Token của Bot (lấy từ @BotFather) |
+| **USER_CHAT_ID** | ID Telegram của bạn (người nhận tin nhắn) |
+| **CHECK_DAY** | Ngày kiểm tra hàng tháng (1-31). Để trống nếu check hàng ngày. |
+| **CHECK_TIME_HOUR** | Giờ kiểm tra (0-23) |
+| **TIMEOUT_HOURS** | Thời gian chờ phản hồi (VD: 24, 9h, 30m, 1w) |
+| **MAX_RETRIES** | Số lần nhắc nhở tối đa trước khi gửi email |
+| **STATUS** | Trạng thái hiện tại (ALIVE/PENDING/DEAD) |
+| **TEST_MODE** | Chế độ test (TRUE/FALSE) |
+| **LAST_PING** | (Tự động) Thời gian kiểm tra gần nhất |
+| **RETRIES** | (Tự động) Số lần đã nhắc nhở hiện tại |
 4.  **Deploy (Triển khai)**:
     *   Bấm **Deploy > New Deployment**.
     *   Select type: **Web App**.
