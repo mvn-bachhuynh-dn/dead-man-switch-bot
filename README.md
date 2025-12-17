@@ -20,7 +20,7 @@ This system ensures your legacy information is delivered to your beneficiaries i
     <p align="center">
       <img src="images/telegram_search_botfather.png" width="50%">
     </p>
-2.  Send `/newbot` and follow instructions to get your **Bot Token**.
+2.  Send `/newbot` and follow instructions to get your **Bot Token**. (Save this token to use in the next step. Keep it safe and do not share it with anyone.)
     <p align="center">
       <img src="images/telegram_newbot_token.png" width="50%">
     </p>
@@ -55,6 +55,12 @@ This system ensures your legacy information is delivered to your beneficiaries i
     
     <p align="center">
       <img src="images/sheet_menu.png" width="50%">
+    </p>
+
+    *   Configure the necessary parameters in the "Config" sheet. From the steps already completed. (refer to the step 5)
+
+    <p align="center">
+      <img src="images/config_sheet_init.png" width="50%">
     </p>
 
 4.  **Deploy > New Deployment** > Select **Web App**.
@@ -101,15 +107,18 @@ If you are using **Monthly/Weekly Checks** (long timeouts) and want to save scri
 ## 5. Usage & Configuration
 In the "Config" Sheet, you can customize:
 
-*   **CHECK_DAY**: (Optional) Enter a day (1-31) to check only on that day of the month. Leave empty to check every day.
-*   **CHECK_TIME_HOUR**: The hour (0-23) to send the check.
-*   **TIMEOUT_HOURS**: Time to wait for a reply. Supports:
-    *   `1w` (1 week)
-    *   `3d` (3 days)
-    *   `9h` (9 hours)
-    *   `30m` (30 minutes)
-    *   Default is hours if no suffix.
-*   **MAX_RETRIES**: Number of reminders to send before declaring DEAD.
+| Key | Description |
+| :--- | :--- |
+| **TELEGRAM_BOT_TOKEN** | Get from step 1.2 |
+| **USER_CHAT_ID** | Get from step 1.4 |
+| **CHECK_DAY** | Day of the month to check (1-31). Leave empty to check daily. |
+| **CHECK_TIME_HOUR** | Check time hour (0-23) |
+| **TIMEOUT_HOURS** | Time to wait for a response (e.g., 24, 9h, 30m, 1w) |
+| **MAX_RETRIES** | Max reminders before sending email |
+| **STATUS** | (Automatic) Current status (ALIVE/PENDING/DEAD) |
+| **TEST_MODE** | Test mode (TRUE/FALSE) |
+| **LAST_PING** | (Automatic) Last check time |
+| **RETRIES** | (Automatic) Current retry count |
 
 If configured as shown below, I want the bot to send a monthly check-in message on the 12th of each month at around 9:00 AM. If there is no response, the bot should send up to three reminders, each 24 hours apart. If there is still no response after that, the bot should send a notification email.
 <p align="center">
