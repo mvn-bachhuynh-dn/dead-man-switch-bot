@@ -63,23 +63,11 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
       <img src="images/sheet_menu.png" width="50%">
     </p>
 
-    *   Cấu hình các thông số cần thiết trong sheet "Config". Từ các bước đã thực hiện trước đó.
+    *   Cấu hình các thông số cần thiết trong sheet "Config". Từ các bước đã thực hiện trước đó. (Xem bước 5 để tham khảo cấu hình)
 
     <p align="center">
       <img src="images/config_sheet_init.png" width="50%">
     </p>
-| Key | Mô tả |
-| :--- | :--- |
-| **TELEGRAM_BOT_TOKEN** | Token của Bot (lấy từ @BotFather) |
-| **USER_CHAT_ID** | ID Telegram của bạn (người nhận tin nhắn) |
-| **CHECK_DAY** | Ngày kiểm tra hàng tháng (1-31). Để trống nếu check hàng ngày. |
-| **CHECK_TIME_HOUR** | Giờ kiểm tra (0-23) |
-| **TIMEOUT_HOURS** | Thời gian chờ phản hồi (VD: 24, 9h, 30m, 1w) |
-| **MAX_RETRIES** | Số lần nhắc nhở tối đa trước khi gửi email |
-| **STATUS** | Trạng thái hiện tại (ALIVE/PENDING/DEAD) |
-| **TEST_MODE** | Chế độ test (TRUE/FALSE) |
-| **LAST_PING** | (Tự động) Thời gian kiểm tra gần nhất |
-| **RETRIES** | (Tự động) Số lần đã nhắc nhở hiện tại |
 4.  **Deploy (Triển khai)**:
     *   Bấm **Deploy > New Deployment**.
     *   Select type: **Web App**.
@@ -128,15 +116,18 @@ Nếu bạn chỉ dùng cấu hình **Kiểm tra theo Tháng/Tuần** (thời gi
 ## 5. Sử dụng & Cấu hình
 Trong Sheet "Config", bạn có thể tùy chỉnh:
 
-*   **CHECK_DAY**: (Tùy chọn) Nhập ngày (1-31) để chỉ kiểm tra vào ngày đó trong tháng. Để trống để kiểm tra hàng ngày.
-*   **CHECK_TIME_HOUR**: Giờ (0-23) bot sẽ gửi tin nhắn kiểm tra.
-*   **TIMEOUT_HOURS**: Thời gian chờ phản hồi. Hỗ trợ:
-    *   `1w` (1 tuần)
-    *   `3d` (3 ngày)
-    *   `9h` (9 giờ)
-    *   `30m` (30 phút)
-    *   Mặc định là giờ nếu không có đơn vị.
-*   **MAX_RETRIES**: Số lần nhắc nhở trước khi tuyên bố DEAD (Đã mất).
+| Key | Mô tả |
+| :--- | :--- |
+| **TELEGRAM_BOT_TOKEN** | Lấy từ bước 1.2 |
+| **USER_CHAT_ID** | Lấy từ bước 1.4 |
+| **CHECK_DAY** | Ngày kiểm tra hàng tháng (1-31). Để trống nếu check hàng ngày. |
+| **CHECK_TIME_HOUR** | Giờ kiểm tra (0-23) |
+| **TIMEOUT_HOURS** | Thời gian chờ phản hồi (VD: 24, 9h, 30m, 1w) |
+| **MAX_RETRIES** | Số lần nhắc nhở tối đa trước khi gửi email |
+| **STATUS** | (Tự động) Trạng thái hiện tại (ALIVE/PENDING/DEAD) |
+| **TEST_MODE** | Chế độ test (TRUE/FALSE) |
+| **LAST_PING** | (Tự động) Thời gian kiểm tra gần nhất |
+| **RETRIES** | (Tự động) Số lần đã nhắc nhở hiện tại |
 
 Nếu config như hình dưới thì tôi muốn bot gửi tin nhắn kiểm tra hàng tháng vào ngày 12 của tháng, khoảng 9h sáng, và nếu không có phản hồi sẽ nhắc 3 lần sau mỗi 24h. Nếu vẫn không có phản hồi, bot sẽ gửi email thông báo.
 <p align="center">
