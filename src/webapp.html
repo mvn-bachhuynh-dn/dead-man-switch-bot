@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Dead Man Switch Bot</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --tg-theme-bg-color: #fff;
+            --tg-theme-text-color: #000;
+            --tg-theme-hint-color: #999;
+            --tg-theme-link-color: #2481cc;
+            --tg-theme-button-color: #2481cc;
+            --tg-theme-button-text-color: #fff;
+            --tg-theme-secondary-bg-color: #efefef;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            padding: 16px;
+            padding-bottom: 80px;
+            /* Space for bottom button */
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--tg-theme-hint-color);
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--tg-theme-hint-color);
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--tg-theme-link-color);
+            border-bottom-color: var(--tg-theme-link-color);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--tg-theme-hint-color);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid var(--tg-theme-hint-color);
+            border-radius: 8px;
+            background-color: var(--tg-theme-secondary-bg-color);
+            color: var(--tg-theme-text-color);
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--tg-theme-link-color);
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--tg-theme-hint-color);
+        }
+
+        .card-actions {
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background-color: #ff3b30;
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--tg-theme-bg-color);
+            padding: 20px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        /* Main Button Placeholder logic handled by Telegram WebApp */
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('config')" id="tab_config">Configuration</div>
+            <div class="tab" onclick="switchTab('ben')" id="tab_ben">Beneficiaries</div>
+        </div>
+
+        <!-- Config Section -->
+        <div id="section_config" class="section active">
+            <div class="form-group">
+                <label id="lbl_timeout">Timeout (e.g. 24, 9h, 30m, 1w)</label>
+                <input type="text" id="TIMEOUT_HOURS">
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_check_hour">Check Hour (0-23)</label>
+                <input type="number" id="CHECK_TIME_HOUR" min="0" max="23">
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_check_day">Check Day (1-31, empty for daily)</label>
+                <input type="number" id="CHECK_DAY" min="1" max="31">
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_max_retries">Max Retries</label>
+                <input type="number" id="MAX_RETRIES" min="1" max="10">
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_test_mode">Test Mode</label>
+                <select id="TEST_MODE">
+                    <option value="FALSE">FALSE (Normal)</option>
+                    <option value="TRUE">TRUE (Test 2m)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Debug Mode</label>
+                <select id="DEBUG_MODE">
+                    <option value="FALSE">FALSE</option>
+                    <option value="TRUE">TRUE</option>
+                </select>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-sm"
+                    style="background: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); padding: 10px 40px; font-size: 16px;"
+                    onclick="submitConfig()" id="btn_save_config">
+                    SAVE CONFIG
+                </button>
+            </div>
+
+            <!-- Config Explanation -->
+            <div id="config_explanation"
+                style="margin-top: 20px; padding: 10px; background-color: var(--tg-theme-secondary-bg-color); border-radius: 8px; font-size: 14px; line-height: 1.5; color: var(--tg-theme-hint-color); font-style: italic;">
+                Loading explanation...
+            </div>
+        </div>
+
+        <!-- Beneficiaries Section -->
+        <div id="section_ben" class="section">
+            <div id="ben_list">
+                <!-- Cards go here -->
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-sm"
+                    style="background: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); padding: 10px 20px; font-size: 14px;"
+                    onclick="openAddModal()" id="btn_add_ben">+ Add Beneficiary</button>
+            </div>
+        </div>
+
+        <!-- Debug Log (Hidden by default) -->
+        <div id="debug_log"
+            style="display:none; margin-top:20px; padding:10px; border:1px solid #ccc; font-family:monospace; font-size:12px; height:100px; overflow:auto; background:#f9f9f9; word-break:break-all;">
+            Debug Log Init...
+        </div>
+    </div>
+
+    <!-- Add Modal -->
+    <div id="add_modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal_title">Add Beneficiary</div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" id="new_email">
+            </div>
+            <div class="form-group">
+                <label id="lbl_subject">Subject</label>
+                <input type="text" id="new_subject">
+            </div>
+            <div class="form-group">
+                <label id="lbl_body">Message</label>
+                <textarea id="new_body" rows="4"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-sm"
+                    style="flex: 1; background: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color);"
+                    onclick="closeAddModal()" id="btn_cancel">Cancel</button>
+                <button class="btn-sm"
+                    style="flex: 1; background: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color);"
+                    onclick="saveBeneficiary()" id="btn_save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Debug Logger (Set to true to enable logs)
+        let ENABLE_DEBUG = false; // Will be set by CONFIG_DATA
+
+        function log(msg) {
+            if (!ENABLE_DEBUG) return;
+            const d = document.getElementById('debug_log');
+            if (d) {
+                d.style.display = 'block'; // Auto-show if debug is on
+                d.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>` + d.innerHTML;
+            }
+        }
+
+        window.onerror = function (msg, url, line) {
+            log(`Global Error: ${msg} @ ${line}`);
+            return false;
+        };
+
+        // Initialize Theme
+        document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#fff');
+        document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#000');
+
+        function renderExplanation() {
+            const timeout = document.getElementById('TIMEOUT_HOURS').value;
+            const hour = document.getElementById('CHECK_TIME_HOUR').value;
+            const day = document.getElementById('CHECK_DAY').value;
+            const retries = document.getElementById('MAX_RETRIES').value;
+            const testMode = document.getElementById('TEST_MODE').value;
+            const div = document.getElementById('config_explanation');
+
+            if (!div) return;
+
+            let html = "";
+            let style = { color: 'var(--tg-theme-hint-color)', bg: 'var(--tg-theme-secondary-bg-color)' };
+            const isMinutes = String(timeout).toLowerCase().endsWith('m');
+            const isTest = (testMode === 'TRUE');
+
+            if (testMode === 'TRUE') {
+                style = { color: '#d32f2f', bg: '#ffebee' }; // Warning Red
+                html += `⚠️ <b>CHẾ ĐỘ TEST ĐANG BẬT</b><br/>`;
+                html += `Bot sẽ kiểm tra liên tục (cần Trigger mỗi phút).<br/>`;
+
+                // Advice on Timeout
+                if (!isMinutes) {
+                    html += `⚠️ <b>Lưu ý:</b> Bạn đang để Timeout là <b>${timeout}</b> (Giờ). Trong chế độ Test, nên dùng đơn vị phút (ví dụ: <b>5m</b>) để kiểm tra nhanh hơn.<br/>`;
+                } else {
+                    html += `Timeout: <b>${timeout}</b> (Phút) - Ổn.<br/>`;
+                }
+
+                html += `-> Nếu bạn không phản hồi ` +
+                    `sau <b>${retries}</b> lần nhắc (cách nhau ${timeout}), bot sẽ gửi báo động.<br/>`;
+                html += `<b>Yêu cầu quan trọng:</b><br/>`;
+                html += `1. Cài đặt Trigger trên Apps Script là: <b>Mỗi phút (Every Minute)</b>.<br/>`;
+                html += `2. Xóa sạch danh sách người thụ hưởng thật (để tránh gửi nhầm).`;
+            }
+
+            if (!isTest) {
+                // 2. NORMAL MODE LOGIC
+                style = { color: '#2e7d32', bg: '#e8f5e9' }; // Success Green/Neutral
+
+                // Schedule Warning
+                if (day && String(day).trim() !== "") {
+                    html += `📅 <b>Lịch trình:</b> Kiểm tra vào <b>ngày ${day} hàng tháng</b>, lúc <b>${hour}h</b>.<br/>`;
+                } else {
+                    html += `📅 <b>Lịch trình:</b> Kiểm tra <b>hàng ngày</b>, lúc <b>${hour}h</b>.<br/>`;
+                }
+
+                // Advice on Timeout
+                if (isMinutes) {
+                    style = { color: '#ef6c00', bg: '#fff3e0' }; // Orange Warning
+                    html += `⚠️ <b>Cảnh báo:</b> Bạn đang để Timeout là <b>${timeout}</b> (Phút). <br/>`;
+                    html += `Ở chế độ thường (Trigger mỗi giờ), đơn vị phút có thể không chính xác hoặc bị bỏ qua. Nên để theo giờ (VD: 24, 48).<br/>`;
+                }
+
+                html += `🔔 <b>Quy trình:</b> Nếu không thấy bạn online, bot sẽ nhắc <b>${retries}</b> lần (cách nhau ${timeout}).<br/>`;
+                html += `✅ <b>Yêu cầu:</b> Cài đặt Trigger trên Apps Script là: <b>Mỗi giờ (Every Hour)</b>.<br/>`;
+                html += `Hãy kiểm tra kỹ thông tin người thụ hưởng.`;
+            }
+
+            div.innerHTML = html;
+            div.style.color = style.color;
+            div.style.backgroundColor = style.bg;
+        }
+
+        // Localization from Backend
+        const LABELS = <?!= JSON.stringify(labels) ?>;
+        const CONFIG_DATA = <?!= JSON.stringify(configData) ?>;
+
+        // Apply Labels
+        document.getElementById('tab_config').innerText = LABELS.tab_config;
+        document.getElementById('tab_ben').innerText = LABELS.tab_ben;
+        document.getElementById('lbl_timeout').innerText = LABELS.timeout;
+        document.getElementById('lbl_check_hour').innerText = LABELS.check_hour;
+        document.getElementById('lbl_check_day').innerText = LABELS.check_day;
+        document.getElementById('lbl_max_retries').innerText = LABELS.max_retries;
+        document.getElementById('lbl_test_mode').innerText = LABELS.test_mode;
+        document.getElementById('btn_add_ben').innerText = LABELS.btn_add;
+        document.getElementById('modal_title').innerText = LABELS.modal_title;
+        document.getElementById('lbl_subject').innerText = LABELS.subject;
+        document.getElementById('lbl_body').innerText = LABELS.message;
+        document.getElementById('btn_cancel').innerText = LABELS.btn_cancel;
+        document.getElementById('lbl_body').innerText = LABELS.message;
+        document.getElementById('btn_cancel').innerText = LABELS.btn_cancel;
+        document.getElementById('btn_save').innerText = LABELS.btn_save;
+        document.getElementById('btn_save_config').innerText = LABELS.save_config; // Set label for new button
+
+        // Fill Config
+        document.getElementById('TIMEOUT_HOURS').value = CONFIG_DATA.TIMEOUT_HOURS;
+        document.getElementById('CHECK_TIME_HOUR').value = CONFIG_DATA.CHECK_TIME_HOUR;
+        document.getElementById('CHECK_DAY').value = CONFIG_DATA.CHECK_DAY;
+        document.getElementById('MAX_RETRIES').value = CONFIG_DATA.MAX_RETRIES;
+        document.getElementById('CHECK_DAY').value = CONFIG_DATA.CHECK_DAY;
+        document.getElementById('MAX_RETRIES').value = CONFIG_DATA.MAX_RETRIES;
+        document.getElementById('TEST_MODE').value = CONFIG_DATA.TEST_MODE;
+        document.getElementById('DEBUG_MODE').value = CONFIG_DATA.DEBUG_MODE || 'FALSE';
+
+        // Init Debug Flag
+        if (CONFIG_DATA.DEBUG_MODE === 'TRUE') {
+            ENABLE_DEBUG = true;
+            document.getElementById('debug_log').style.display = 'block';
+            log("Debug Mode Enabled");
+        }
+
+        // Bind Events for Explanation
+        const inputs = ['TIMEOUT_HOURS', 'CHECK_TIME_HOUR', 'CHECK_DAY', 'MAX_RETRIES', 'TEST_MODE'];
+        inputs.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', renderExplanation);
+                el.addEventListener('change', renderExplanation);
+            }
+        });
+
+        // Initial Render
+        renderExplanation();
+
+        // Telegram Main Button - REMOVED due to improved compatibility with manual button
+        /*
+        tg.MainButton.setText(LABELS.save_config);
+        tg.MainButton.show();
+
+        tg.MainButton.onClick(() => {
+            if (currentTab === 'config') {
+                submitConfig();
+            }
+        });
+        */
+
+        let currentTab = 'config';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+
+            document.getElementById('tab_' + tab).classList.add('active');
+            document.getElementById('section_' + tab).classList.add('active');
+
+            if (tab === 'config') {
+                // tg.MainButton.show(); 
+            } else {
+                // tg.MainButton.hide();
+                loadBeneficiaries();
+            }
+        }
+
+        function submitConfig() {
+            try {
+                // DEBUG: Trace start
+                log("Submit Clicked");
+
+                const payload = {
+                    action: 'saveConfig',
+                    TIMEOUT_HOURS: document.getElementById('TIMEOUT_HOURS').value,
+                    CHECK_TIME_HOUR: document.getElementById('CHECK_TIME_HOUR').value,
+                    CHECK_DAY: document.getElementById('CHECK_DAY').value,
+                    MAX_RETRIES: document.getElementById('MAX_RETRIES').value,
+                    TEST_MODE: document.getElementById('TEST_MODE').value,
+                    DEBUG_MODE: document.getElementById('DEBUG_MODE').value
+                };
+
+                // Update local flag immediately for feedback
+                ENABLE_DEBUG = (payload.DEBUG_MODE === 'TRUE');
+                if (ENABLE_DEBUG) document.getElementById('debug_log').style.display = 'block';
+                else document.getElementById('debug_log').style.display = 'none';
+
+                // DEBUG: Payload ready
+                log("Payload: " + JSON.stringify(payload));
+
+                google.script.run
+                    .withSuccessHandler(() => {
+                        log(LABELS.save_success);
+                        alert(LABELS.save_success);
+                    })
+                    .withFailureHandler((e) => {
+                        log("Server Error: " + e.message);
+                        alert("Server Error: " + e.message);
+                    })
+                    .doPostApi(payload); // Reverted to doPostApi
+
+                log("Sent request to google.script.run.doPostApi");
+            } catch (err) {
+                log("Client Error: " + err.message);
+            }
+        }
+
+        function loadBeneficiaries() {
+            document.getElementById('ben_list').innerHTML = '<div style="text-align:center; padding:20px;">Loading...</div>';
+
+            google.script.run
+                .withSuccessHandler((data) => {
+                    renderBenList(data);
+                })
+                .withFailureHandler((e) => {
+                    document.getElementById('ben_list').innerHTML = 'Error loading list';
+                })
+                .doPostApi({ action: 'getBeneficiaries' });
+        }
+
+        function renderBenList(list) {
+            const container = document.getElementById('ben_list');
+            container.innerHTML = '';
+
+            if (list.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--tg-theme-hint-color);">(${LABELS.empty_list})</div>`;
+                return;
+            }
+
+            list.forEach(b => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+        <div class="card-title">${b.email}</div>
+        <div class="card-subtitle">${b.subject}</div>
+        <div class="card-actions">
+           <button class="btn-sm btn-danger" onclick="deleteBen(${b.row})">${LABELS.btn_delete}</button>
+        </div>
+      `;
+                container.appendChild(card);
+            });
+        }
+
+        function deleteBen(row) {
+            // Using standard confirm
+            if (confirm(LABELS.confirm_delete)) {
+                log("Deleting row " + row);
+                google.script.run
+                    .withSuccessHandler(() => {
+                        log("Deleted success");
+                        loadBeneficiaries();
+                    })
+                    .withFailureHandler(e => log("Delete fail: " + e.message))
+                    .doPostApi({ action: 'deleteBeneficiary', row: row });
+            }
+        }
+
+        function openAddModal() {
+            document.getElementById('new_email').value = '';
+            document.getElementById('new_subject').value = '';
+            document.getElementById('new_body').value = '';
+            document.getElementById('add_modal').classList.add('open');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add_modal').classList.remove('open');
+        }
+
+        function saveBeneficiary() {
+            const email = document.getElementById('new_email').value;
+            const sub = document.getElementById('new_subject').value;
+            const body = document.getElementById('new_body').value;
+
+            if (!email || !sub || !body) {
+                alert(LABELS.validation_error);
+                return;
+            }
+
+            google.script.run
+                .withSuccessHandler(() => {
+                    closeAddModal();
+                    loadBeneficiaries();
+                })
+                .doPostApi({ action: 'addBeneficiary', email: email, subject: sub, body: body });
+        }
+
+    </script>
+</body>
+
+</html>
