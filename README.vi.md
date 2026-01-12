@@ -53,7 +53,11 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     </p>
 
 2.  Copy toàn bộ code từ file `src/Code.vi.gs` trong thư mục này vào trình soạn thảo script.
-3.  **Chạy Cài đặt**:
+3.  Tạo file HTML mới:
+    *   Bấm dấu `+` > chọn **HTML**.
+    *   Đặt tên là `webapp`.
+    *   Copy nội dung từ file `src/webapp.html` dán vào.
+4.  **Chạy Cài đặt**:
     *   Reload (F5) lại trang Google Sheet.
     *   Bạn sẽ thấy menu **"Dead Man Bot"** xuất hiện trên thanh công cụ (sau vài giây).
     *   Bấm **Dead Man Bot > Setup Sheet**.
@@ -79,13 +83,17 @@ Hệ thống này đảm bảo thông tin thừa kế của bạn sẽ được 
     </p>
 
 5.  Copy **Web App URL**.
-6.  Chạy hàm `setWebhook()` (thay thế `YOUR_WEB_APP_URL` trong code bằng URL vừa copy, hoặc hardcode tạm để chạy setup).
+6.  Chạy hàm `setWebhook()` (thay thế `YOUR_WEB_APP_URL` trong code bằng URL vừa copy).
+    *   **Lưu ý**: Bước này sẽ kích hoạt nút "Cấu hình Bot" (Mini App) trên Telegram.
+    ```javascript
+      // replace with your web app url
+      const url = "YOUR_WEB_APP_URL_HERE"; 
     ```
-      376: // replace with your web app url
-      377: const url = "YOUR_WEB_APP_URL_HERE"; ```   
   <p align="center">
-    <img src="images/run_setwebhook.png" width="50%">
   </p>
+
+> [!IMPORTANT]
+> **Cập nhật v1.1.0**: Kể từ phiên bản này, bạn có thể cấu hình bot trực tiếp trên giao diện Telegram (Mini App) cực kỳ trực quan thay vì sửa Sheet thủ công.
 
 ## 4. Cài đặt Trigger (Bắt buộc)
 Để bot tự động chạy, bạn phải cài đặt Trigger theo đúng hướng dẫn sau:
@@ -133,6 +141,20 @@ Nếu config như hình dưới thì tôi muốn bot gửi tin nhắn kiểm tra
 <p align="center">
   <img src="images/config_sheet_demo.png" width="50%">
 </p>
+
+## 5b. Cấu hình qua Giao diện (Mới)
+Sau khi chạy `setWebhook`, một nút **"Bot Config"** sẽ xuất hiện khi bạn chat `/menu` hoặc mở Menu chính của bot.
+
+<p align="center">
+  <img src="images/config_ui_preview.png" width="50%">
+</p>
+
+Giao diện này cho phép bạn:
+*   **Dễ dàng điều chỉnh**: Timeout, Giờ kiểm tra, Ngày kiểm tra...
+*   **Chế độ Test & Debug**: Bật tắt nhanh chóng để kiểm tra lỗi.
+*   **Giải thích thông minh**: Bot sẽ tự động giải thích cấu hình hiện tại (Ví dụ: "Bot sẽ kiểm tra ngày 1 hàng tháng...") và cảnh báo nếu bạn cài đặt sai (Ví dụ: Dùng Timeout phút cho chế độ chạy giờ).
+
+> **Lưu ý**: Nếu bạn đang dùng phiên bản cũ, hãy update code trong file `Code.vi.gs` và `webapp.html` lên phiên bản v1.1.0 mới nhất, sau đó chọn **Deploy > New Deployment** để thấy được giao diện này.
 
 ### Các Ví dụ Cấu hình
 

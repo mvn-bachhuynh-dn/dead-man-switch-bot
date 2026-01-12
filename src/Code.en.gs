@@ -62,6 +62,10 @@ function setConfig(key, value) {
 // CORE LOGIC
 // ==========================================
 
+// ==========================================
+// CORE LOGIC & HELPERS
+// ==========================================
+
 function mainJob() {
   const config = getConfig();
   const now = new Date();
@@ -183,54 +187,105 @@ function triggerLegacyProtocol() {
 }
 
 // ==========================================
-// TELEGRAM HANDLERS
+// STATE MANAGEMENT & HELPERS
 // ==========================================
 
+function setUserState(chatId, state, data = {}) {
+  const cache = CacheService.getScriptCache();
+  const value = JSON.stringify({ state: state, data: data });
+  cache.put(chatId, value, 600); // 10 minutes expiry
+}
+
+function getUserState(chatId) {
+  const cache = CacheService.getScriptCache();
+  const value = cache.get(chatId);
+  return value ? JSON.parse(value) : null;
+}
+
+function clearUserState(chatId) {
+  CacheService.getScriptCache().remove(chatId);
+}
+
+function getBeneficiaries() {
+  const ss = getSheet();
+  const sh = ss.getSheetByName(SHEET_BENEFICIARIES);
+  if (sh.getLastRow() <= 1) return [];
+  const data = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues();
+  return data.map((row, index) => ({
+    id: index + 1,
+    row: index + 2, // Sheet row (1-based)
+    email: row[0],
+    subject: row[1],
+    body: row[2]
+  }));
+}
+
+function addBeneficiary(email, subject, body) {
+  const ss = getSheet();
+  const sh = ss.getSheetByName(SHEET_BENEFICIARIES);
+  sh.appendRow([email, subject, body]);
+}
+
+function deleteBeneficiary(row) {
+  const ss = getSheet();
+  const sh = ss.getSheetByName(SHEET_BENEFICIARIES);
+  sh.deleteRow(row);
+}
+
+// ==========================================
+// TELEGRAM HANDLERS (UPDATED)
+// ==========================================
+
+  /* 
+  // CONFLICT: doGet is already defined in Code.vi.gs
+  function doGet(e) {
+    return serveWebApp(e);
+  }
+  */
 function doPost(e) {
   try {
     const update = JSON.parse(e.postData.contents);
     const config = getConfig();
     const botToken = config['TELEGRAM_BOT_TOKEN'];
+    const botToken = config['TELEGRAM_BOT_TOKEN'];
     const authorizedChatId = String(config['USER_CHAT_ID']).trim();
-
+    // Use DEBUG_MODE to toggle logging (conceptually, though Logger always runs, we can use this for specific verbose logs)
+    const debugMode = (config['DEBUG_MODE'] === 'TRUE');
     
-    // Handle Callback Query (Button click)
+    // Save DEBUG_MODE if passed in payload (from Web App)
+    if (update.action === 'saveConfig') {
+       if (update.DEBUG_MODE) setConfig('DEBUG_MODE', update.DEBUG_MODE);
+    }
+
+    // 1. Handle Callback Query (Buttons)
     if (update.callback_query) {
       const cb = update.callback_query;
-      const data = cb.data;
       const chatId = String(cb.message.chat.id);
       
-      // Authorization Check
-      if (chatId !== authorizedChatId) {
-         Logger.log(`Unauthorized access attempt from Chat ID: ${chatId}`);
-         return HtmlService.createHtmlOutput("OK");
-      }
+      if (chatId !== authorizedChatId) return HtmlService.createHtmlOutput("OK");
 
-      
-      if (data === 'alive') {
-        confirmAlive(chatId, botToken);
-        // Answer callback to remove loading state on button
-        UrlFetchApp.fetch(`https://api.telegram.org/bot${botToken}/answerCallbackQuery?callback_query_id=${cb.id}`);
-      }
+      handleCallback(botToken, chatId, cb);
       return HtmlService.createHtmlOutput("OK");
     }
     
-    // Handle Message
+    // 2. Handle Message (Text)
     if (update.message) {
       const msg = update.message;
       const text = msg.text;
       const chatId = String(msg.chat.id);
       
-      // Authorization Check
-      if (chatId !== authorizedChatId) {
-         Logger.log(`Unauthorized access attempt from Chat ID: ${chatId}`);
-         return HtmlService.createHtmlOutput("OK");
+      if (chatId !== authorizedChatId) return HtmlService.createHtmlOutput("OK");
+
+      // Check state first
+      const userState = getUserState(chatId);
+      if (userState && text && !text.startsWith('/')) {
+        handleInput(botToken, chatId, text, userState);
+        return HtmlService.createHtmlOutput("OK");
       }
 
-      
-      // Simple logic: Any message from user confirms they are alive
+      // Handle Commands
       if (text) {
-         confirmAlive(chatId, botToken);
+        handleCommand(botToken, chatId, text);
       }
     }
     return HtmlService.createHtmlOutput("OK");
@@ -240,11 +295,214 @@ function doPost(e) {
   }
 }
 
+function handleCommand(token, chatId, text) {
+  // Always confirm alive on interaction
+  confirmAlive(chatId, token);
+  clearUserState(chatId);
+
+  if (text === '/start' || text === '/menu') {
+    showMainMenu(token, chatId);
+  } else {
+    showMainMenu(token, chatId);
+  }
+}
+
+function showMainMenu(token, chatId) {
+  const keyboard = {
+    inline_keyboard: [
+      [
+        { text: "⚙️ Bot Config", callback_data: "menu_config" },
+        { text: "👥 Beneficiaries", callback_data: "menu_ben" }
+      ],
+      [{ text: "❌ Exit", callback_data: "close" }]
+    ]
+  };
+  sendTelegram(token, chatId, "👋 Hello Master! What would you like to do today?", keyboard);
+}
+
+function handleCallback(token, chatId, cb) {
+  const data = cb.data;
+  
+  // Confirm alive on click
+  confirmAlive(chatId, token);
+  
+  // Answer callback immediately to stop loading animation
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery?callback_query_id=${cb.id}`);
+
+  if (data === "alive") {
+     sendTelegram(token, chatId, "✅ Confirmed you are alive!");
+     return;
+  }
+  
+  if (data === "close") {
+    // Delete the menu message (optional, or just ignore)
+    return; 
+  }
+
+  // --- MAIN MENU (Back button) ---
+  if (data === "menu") {
+    showMainMenu(token, chatId);
+    return;
+  }
+
+  // --- CONFIG MENU ---
+  if (data === "menu_config") {
+    showConfigMenu(token, chatId);
+    return;
+  }
+  if (data.startsWith("cfg_edit_")) {
+    const field = data.replace("cfg_edit_", "");
+    
+    // Toggle Test Mode immediately
+    if (field === "TEST_MODE") {
+      const current = getConfig()['TEST_MODE'];
+      const newVal = (String(current).toUpperCase() === 'TRUE') ? 'FALSE' : 'TRUE';
+      setConfig('TEST_MODE', newVal);
+      sendTelegram(token, chatId, `Test Mode toggled to: ${newVal}`);
+      showConfigMenu(token, chatId);
+      return;
+    }
+
+    // For others, ask input
+    setUserState(chatId, "WAITING_CONFIG_VALUE", { field: field });
+    let prompt = `Enter new value for ${field}:`;
+    if (field === "CHECK_DAY") prompt += "\n(1-31, or send '0' to clear)";
+    if (field === "TIMEOUT_HOURS") prompt += "\n(Fixed: 24h, 30m, 1w)";
+    sendTelegram(token, chatId, prompt);
+    return;
+  }
+
+  // --- BENEFICIARY MENU ---
+  if (data === "menu_ben") {
+    showBeneficiaryMenu(token, chatId);
+    return;
+  }
+  if (data === "ben_add") {
+    setUserState(chatId, "WAITING_BEN_EMAIL");
+    sendTelegram(token, chatId, "📧 Enter Beneficiary EMAIL:");
+    return;
+  }
+  if (data.startsWith("ben_del_")) {
+    const row = Number(data.replace("ben_del_", ""));
+    deleteBeneficiary(row);
+    sendTelegram(token, chatId, "🗑️ Beneficiary deleted.");
+    showBeneficiaryMenu(token, chatId);
+    return;
+  }
+}
+
+function handleInput(token, chatId, text, userState) {
+  const state = userState.state;
+  const data = userState.data;
+
+  // --- CONFIG INPUT ---
+  if (state === "WAITING_CONFIG_VALUE") {
+    const field = data.field;
+    let val = text.trim();
+    if (field === "CHECK_DAY" && val === '0') val = "";
+    
+    setConfig(field, val);
+    sendTelegram(token, chatId, `✅ Updated ${field} = ${val}`);
+    clearUserState(chatId);
+    showConfigMenu(token, chatId);
+    return;
+  }
+
+  // --- ADD BEN FLOW ---
+  if (state === "WAITING_BEN_EMAIL") {
+    // Save email, move to next
+    setUserState(chatId, "WAITING_BEN_SUBJECT", { email: text });
+    sendTelegram(token, chatId, "📝 Enter Subject:");
+    return;
+  }
+  if (state === "WAITING_BEN_SUBJECT") {
+    // Save subject, move to next
+    const context = data;
+    context.subject = text;
+    setUserState(chatId, "WAITING_BEN_BODY", context);
+    sendTelegram(token, chatId, "💬 Enter Message Body:");
+    return;
+  }
+  if (state === "WAITING_BEN_BODY") {
+    const context = data;
+    const body = text;
+    addBeneficiary(context.email, context.subject, body);
+    sendTelegram(token, chatId, `✅ Added Beneficiary:\n${context.email}`);
+    clearUserState(chatId);
+    showBeneficiaryMenu(token, chatId);
+    return;
+  }
+}
+
+function showConfigMenu(token, chatId) {
+  const config = getConfig();
+  const msg = [
+    "<b>⚙️ CURRENT CONFIG:</b>",
+    `1. Timeout: ${config['TIMEOUT_HOURS']}`,
+    `2. Check Hour: ${config['CHECK_TIME_HOUR']}`,
+    `3. Check Day: ${config['CHECK_DAY'] || 'Daily'}`,
+    `4. Max Retries: ${config['MAX_RETRIES']}`,
+    `5. Test Mode: ${config['TEST_MODE']}`
+  ].join("\n");
+
+  const keyboard = {
+    inline_keyboard: [
+      [
+        { text: "⏳ Edit Timeout", callback_data: "cfg_edit_TIMEOUT_HOURS" },
+        { text: "🕒 Edit Check Hour", callback_data: "cfg_edit_CHECK_TIME_HOUR" }
+      ],
+      [
+        { text: "📅 Edit Check Day", callback_data: "cfg_edit_CHECK_DAY" },
+        { text: "🔄 Edit Max Retries", callback_data: "cfg_edit_MAX_RETRIES" }
+      ],
+      [
+        { text: "🧪 Toggle Test Mode", callback_data: "cfg_edit_TEST_MODE" }
+      ],
+      [{ text: "🔙 Back", callback_data: "menu" }]
+    ]
+  };
+  sendTelegram(token, chatId, msg, keyboard);
+}
+
+function showBeneficiaryMenu(token, chatId) {
+  const list = getBeneficiaries();
+  let msg = "<b>👥 BENEFICIARY LIST:</b>\n\n";
+  
+  if (list.length === 0) {
+    msg += "(Empty)";
+  } else {
+    list.forEach(b => {
+      msg += `#${b.id}: <b>${b.email}</b>\nSubject: ${b.subject}\n------------------\n`;
+    });
+  }
+
+  // Create delete buttons for each item
+  const deleteButtons = list.map(b => {
+    return { text: `🗑️ Del #${b.id}`, callback_data: `ben_del_${b.row}` };
+  });
+  
+  // Chunk buttons (2 per row)
+  const keyboardRows = [];
+  keyboardRows.push([{ text: "➕ Add New", callback_data: "ben_add" }]);
+  
+  for (let i = 0; i < deleteButtons.length; i += 2) {
+    keyboardRows.push(deleteButtons.slice(i, i + 2));
+  }
+  
+  keyboardRows.push([{ text: "🔙 Back", callback_data: "menu" }]);
+
+  sendTelegram(token, chatId, msg, { inline_keyboard: keyboardRows });
+}
+
 function confirmAlive(chatId, botToken) {
-  setConfig('STATUS', 'ALIVE');
-  setConfig('LAST_PING', ""); // Clear ping time
-  setConfig('RETRIES', 0);
-  sendTelegram(botToken, chatId, "✅ Confirmed you are alive! See you at the next check. Have a nice day!");
+  // Only update status if it was pending or we want to be sure
+  // But strictly, we update status to ALIVE
+  const config = getConfig();
+  if (config['STATUS'] !== 'ALIVE') {
+     setConfig('STATUS', 'ALIVE');
+     setConfig('LAST_PING', ""); 
+     setConfig('RETRIES', 0);
+  }
 }
 
 function sendTelegram(token, chatId, text, markup = null) {
@@ -255,11 +513,15 @@ function sendTelegram(token, chatId, text, markup = null) {
   };
   if (markup) payload.reply_markup = markup;
   
-  UrlFetchApp.fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify(payload)
-  });
+  try {
+     UrlFetchApp.fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+       method: "post",
+       contentType: "application/json",
+       payload: JSON.stringify(payload)
+     });
+  } catch (e) {
+     Logger.log("Telegram Error: " + e);
+  }
 }
 
 // ==========================================
@@ -305,6 +567,7 @@ function setupSheet() {
       ["MAX_RETRIES", "3"],
       ["STATUS", "ALIVE"],
       ["TEST_MODE", "FALSE"],
+      ["DEBUG_MODE", "FALSE"],
       ["LAST_PING", ""],
       ["RETRIES", "0"]
     ];
@@ -376,5 +639,76 @@ function setWebhook() {
   const url = "YOUR_WEB_APP_URL_HERE"; 
   
   const response = UrlFetchApp.fetch(`https://api.telegram.org/bot${token}/setWebhook?url=${url}`);
-  Logger.log(response.getContentText());
+  Logger.log("Webhook: " + response.getContentText());
+  
+  setBotCommands(token);
+}
+
+function setBotCommands(token) {
+  const commands = [
+    { command: "menu", description: "Main Dashboard" },
+    { command: "help", description: "Usage Guide" },
+    { command: "start", description: "Start Bot" }
+  ];
+  
+  const payload = {
+    commands: commands
+  };
+  
+  try {
+    const response = UrlFetchApp.fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify(payload)
+    });
+    Logger.log("Commands: " + response.getContentText());
+  } catch (e) {
+    Logger.log("Error setting commands: " + e);
+  }
+}
+// Helper to generate human-readable config explanation
+function getConfigExplanation(config) {
+  const timeout = config.TIMEOUT_HOURS;
+  const hour = config.CHECK_TIME_HOUR;
+  const day = config.CHECK_DAY;
+  const retries = config.MAX_RETRIES;
+  const testMode = config.TEST_MODE;
+  
+  const isMinutes = String(timeout).toLowerCase().endsWith('m');
+  const isTest = (testMode === 'TRUE');
+
+  if (isTest) {
+      let msg = `⚠️ TEST MODE IS ON\n`;
+      msg += `Bot will check continuously (Requires Trigger 'Every Minute').\n`;
+      
+      if (!isMinutes) {
+          msg += `⚠️ Note: You are using Timeout ${timeout} (Hours). In Test Mode, use minutes (e.g., 5m) for faster checks.\n`;
+      } else {
+          msg += `Timeout: ${timeout} (Minutes) - OK.\n`;
+      }
+      
+      msg += `-> If you don't reply after ${retries} retries (interval ${timeout}), bot will alert beneficiaries.\n`;
+      msg += `Critical Requirements:\n`;
+      msg += `1. Set Apps Script Trigger to: Every Minute.\n`;
+      msg += `2. Clear real beneficiary data to avoid accidents.`;
+      return msg;
+  }
+  
+  // Normal Mode
+  let msg = "";
+  if (day && String(day).trim() !== "") {
+      msg += `📅 Schedule: Checks on day ${day} of every month, at ${hour}h.\n`;
+  } else {
+      msg += `📅 Schedule: Checks daily, at ${hour}h.\n`;
+  }
+  
+  if (isMinutes) {
+      msg += `⚠️ Warning: You are using Timeout ${timeout} (Minutes). In Normal Mode (Hourly Trigger), minutes might be inaccurate. Use hours (e.g., 24, 48).\n`;
+  }
+  
+  msg += `🔔 Process: If you are offline, bot will retry ${retries} times (interval ${timeout}).\n`;
+  msg += `✅ Requirement: Set Apps Script Trigger to: Every Hour.\n`;
+  msg += `Please double-check beneficiary info.`;
+  
+  return msg;
 }

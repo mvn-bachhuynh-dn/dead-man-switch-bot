@@ -74,9 +74,10 @@ This system ensures your legacy information is delivered to your beneficiaries i
 5.  Copy the **Web App URL**.
 6.  Run the `setWebhook()` function (replace `YOUR_WEB_APP_URL` in the code temporarily or via prompt if you know how, simpler: hardcode it just for setup).
 
-    <p align="center">
       <img src="images/run_setwebhook.png" width="50%">
     </p>
+> [!IMPORTANT]
+> **Update v1.1.0**: From this version onwards, you can configure the bot directly via the Telegram Mini App interface, which is much more intuitive than editing the Sheet manually.
 
 ## 4. Trigger Setup (Mandatory)
 For the bot to run automatically, you must set up a Trigger as follows:
@@ -124,6 +125,22 @@ If configured as shown below, I want the bot to send a monthly check-in message 
 <p align="center">
   <img src="images/config_sheet_demo.png" width="50%">
 </p>
+
+
+## 5b. Configuration via UI (New)
+After running `setWebhook`, a **"Bot Config"** button will appear when you chat `/menu` or open the main menu.
+
+<p align="center">
+  <img src="images/config_ui_preview.png" width="50%">
+</p>
+
+This interface allows you to:
+*   **Easily Adjust**: Timeout, Check Hour, Check Day, etc.
+*   **Test & Debug Mode**: Toggle quickly to verify functionality.
+*   **Smart Explanation**: The bot will automatically explain your current config (e.g., "Bot will check on day 1 of every month...") and warn you if it's invalid (e.g., using Minute timeout for Hourly trigger).
+
+> **Note**: If you are using an older version, please update the code in `src/Code.en.gs` (copy to your Apps Script) and `src/webapp.html` to the latest v1.1.0, then select **Deploy > New Deployment** to see this interface.
+
 
 ### Configuration Examples
 
